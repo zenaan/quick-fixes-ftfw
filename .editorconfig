@@ -1,0 +1,25 @@
+# quick-fixes-ftfw
+
+root = true
+
+# defaults for all files unless overridden
+[*]
+charset      = utf-8
+end_of_line  = lf
+indent_style = tab
+#indent_size  = 4  where intent_style is tab, indent_size should be per-user, NOT per-project or filetype - that's the whole point!
+
+# it IS $CURRENT_YEAR already :)
+max_line_length = 96
+
+# other
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+
+# Java
+[src/java/**]
+# for this project, this is absolute:
+indent_style = tab
+# this is a recommendation, not absolute:
+
