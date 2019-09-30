@@ -1,0 +1,72 @@
+
+see
+	stat
+	libguestfs-tools
+	du
+	zerofree - ext2|3|4 - https://frippery.org/uml/
+	cryptsetup
+
+	veracrypt.txt
+	dd.txt
+	mkfs.txt
+
+	https://unix.stackexchange.com/questions/86442/finding-sparse-files
+	https://stackoverflow.com/questions/21499451/c-linux-sparse-file-how-to-check-if-file-is-sparse-and-print-0-filled-disk-bl
+
+
+
+*
+
+
+
+*
+https://serverfault.com/questions/696554/creating-a-grow-on-demand-encrypted-volume-with-luks
+dd of=/repository/file_container.img bs=1G count=0 seek=10  # mk sparse file
+losetup /dev/loop0 /repository/file_container.img
+
+# -y is alias for --verify-passphrase; also --iter-time, -i <number of milliseconds>, ms to spend with PBKDF2 passphrase processing :
+cryptsetup -y luksFormat -i 3000 /dev/loop0
+
+# "On a slow device it may be advisable to increase the iteration time" (entropy of key vs iter time):
+cryptsetup -y luksFormat -i 11000 /dev/loop0
+
+cryptsetup luksOpen /dev/loop0 secretfs
+cryptsetup --allow-discards luksOpen /dev/loop0 secretfs
+
+cryptsetup status secretfs
+mkfs.ext4 /dev/mapper/secretfs
+
+fallocate -l 512M /root/image   # preallocate/ deallocate file
+cryptsetup luksOpen /root/image luksvolume
+mkfs.ext4 -j /dev/mapper/luksvolume
+
+
+
+*
+check if file is sparse: Check size, returned by du utility, and compare with the "apparent size". If you wish you may take a look on the block counting algorithm from du
+
+
+
+*
+Create Truecrypt sparse file on linux (but see tcplay and I think -z option):
+
+http://forums.truecrypt.org/viewtopic.php?t=5176
+
+PostLink to Post: Security Concerns over Hidden Volume on Spare File
+Forum: Problems - Linux	Posted: 2007JanSat 07:29
+Hi,
+
+I know it's weired - the Linux client allows me to do some interesting things like this:
+
+1. create a spare file using dd of=file count=0 bs=XXX seek=XXX, without a TC volume of any type, then
+
+2. create a hidden volume on top of this sparse file using truecrypt --type hidden -c file
+
+Everything works well, and surprising quick. I guess that's due to the sparse file, the implicit quick format for hidden volume, and the needless to create a normal volume first.
+
+The problem is when I mount the volume and copy file into it, the process is much faster than the normal volume, or hidden volume on non-spare normal volume. It is so fast that it is near raw file system copy speed.
+
+I can't help but to think whether any actual and real encryption was actually performed by TC in this case. I grep the volume file but it seems that the contents apparently were not directly visible.
+
+Can anyone confirm if this method of creating hidden volume is secure and safe?
+
