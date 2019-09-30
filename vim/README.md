@@ -4,9 +4,9 @@ Quick fixes for Vim first motivated by seeking a shortcut to toggle `colorcolumn
 briefly known in the Editorconfig world as `max_line_indicator` (which of course should never be
 set per-project, only per-user).
 
-*Keys:*
- - Clean up vimrc by moving related groups of config to sub-files and `so group1.vim` / `source
-   group2.vim`; load such a file from within Vim with e.g. `:so grp3.vim`.
+**Keys:**
+ - Clean up vimrc by moving related groups of config to sub-files and do `so group1.vim` or `source
+   group2.vim` in your vimrc; load such a file whilst running Vim with e.g. `:so grp3.vim`.
 
  - Group functions into importable/ sourceable sub-files (rather than all in `vimrc`).
 
@@ -36,4 +36,10 @@ set per-project, only per-user).
    must use something like `let &colorcolumn = w:max_line_indicator_prev` ; note the use of
    `let`, note the `&` "optiona reference" syntax to the left of the `=`, and whatever variable
    has the goods to the right of `=` (as expected).
+
+
+### See also
+
+ - (Messy Vim notes snippets)[vim.txt]
+ - (Vim status line rando snippets)[vim-status-line.txt]
 

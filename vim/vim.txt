@@ -1,0 +1,333 @@
+
+
+
+
+
+
+*
+# See https://stackoverflow.com/questions/1092685/scrolling-down-both-parts-of-a-split-window-at-the-same-time-in-vim
+# scynchronous scrolling/ lock two (or more) panes together - when bound, and one scrolls, others will scroll same amount (if possible):
+:vs              vertically split window into 2 side by side (split) or other, panes
+:set scrollbind  synchronise scrolling of 2 panes to each other, run this in each pane
+:set scb!        scb is shortcut for "scrollbind", bang toggles a boolean value
+:set noscrollbind  alternative to toggle
+vim -O file1 file2 -c 'windo set scb!'   from the command line
+
+:vsp filename    vertically split window into 2 side by side windows, opening another file in the new vertical split
+
+
+*
+Saving a file and error "CONVERSION ERROR": try this:  :w ++enc=utf-8  (found here: http://stackoverflow.com/questions/12814371/conversion-error-in-vim )
+
+
+
+*
+external comman/ pipe:
+Bang!
+
+Vim also allows you to execute a command directly from the editor, without needing to drop to a shell, by using bang (!) followed by the command to be run. For instance, if you're editing a file in Vim and want to find out how many words are in the file, run
+
+:! wc %
+
+
+
+*
+modelines - http://vim.wikia.com/wiki/Modeline_magic
+- first or last 5 lines of a file (default)
+- if at both start and end of file, then the last modeline settings override earlier settings
+- customize the config for current file only (when loaded/ opened), e.g. near the first or last line of file:
+# vim: set wrap tw=92
+	-or-
+// vim: noai:ts=4:sw=4
+	-or-
+/* vim: noai:ts=4:sw=4
+*/
+	-or-
+/* vim: set noai ts=4 sw=4: */
+	-or-
+/* vim: set fdm=expr fde=getline(v\:lnum)=~'{'?'>1'\:'1': */
+
+
+
+*
+Go to other bracket: %  (brackets, braces, square brackets, comment block, pre-processor conditional)
+
+
+
+*
+Create a numbered list, using a macro:
+You can easily record a macro to do it.
+First insert 1. at the start of the first line (there are a couple of spaces after the 1. but you can't see them).
+Go to the start of the second line and go into record mode with qa.
+Press the following key sequence:
+
+i                         # insert mode
+<ctrl-Y><ctrl-Y><ctrl-Y>  # copy the first few characters from the line above  
+<ESC>                     # back to normal mode
+|                         # go back to the start of the line
+<ctrl-A>                  # increment the number
+j                         # down to the next line
+q                         # stop recording
+
+Now you can play back the recording with @a (the first time; for subsequent times, you can do @@ to repeat the last-executed macro) and it will add a new incremented number to the start of each line.
+
+
+
+*
+movement and selection:
+o - swap to top/bottom or start/end of current visual selection
+O - alternate corner (if in block visual mode) - and $ goes to "end of longest line" !!!
+install matchit.vim plugin to be able to use % to swap between alternate XML/HTML tag and more
+vat - select "v"isual mode, 
+
+see :help visual-operators
+see :help [
+
+/e - "end of current search" - e.g. //e will search for end of current search range (highlight)
+	  See also :help {offset}
+
+see :help tags
+see :help :ta[g][!] ident
+CTRL-] g<LeftMouse> <C-LeftMouse>	   Jump to the definition of the keyword under the cursor.
+CTRL-T g<RightMouse> <C-RightMouse>	 Jump to [count] previous in tag stack (where you were before), default 1.
+CTRL-O	                              Jump to [count] previous in jump stack (where you were before)
+
+e.g. yat - yank all tag, and  yit - yank interior of tag
+
+( )	   -  sentence backwards/ forwards
+]] ][	 -  section forwards
+[[ []	 -  section forwards
+
+jump-motions
+and may want +jumplist in .vimrc
+
+m{a-zA-Z}	            Set mark {a-zA-Z} at cursor position (does not move
+m'  or  m`	           Set the previous context mark.  This can be jumped to with the "''" or "``" command
+g'{mark}  g`{mark}	   Jump to the {mark}, but don't change the jumplist when jumping within the current buffer.
+'{a-z}  `{a-z}	       Jump to the mark {a-z} in the current buffer.
+'{A-Z0-9}  `{A-Z0-9}	 To the mark {A-Z0-9} in the file where it was set
+
+
+
+*
+CASE IN ONE SEARCH PATTERN: See file:///usr/share/doc/vim-doc/html/usr_27.html
+If you want to ignore case for one specific pattern, you can do this by
+prepending the "\c" string.  Using "\C" will make the pattern to match case.
+This overrules the 'ignorecase' and 'smartcase' options, when "\c" or "\C" is
+used their value doesn't matter.
+
+WARN: For s / substitute command, use a flag (see further below):
+	[i]   Ignore case for the pattern. (Zen default)
+	[I]   Don't ignore case for the pattern.
+
+
+
+*
+file:///usr/share/doc/vim-doc/html/change.html#:s  extracts:
+
+4.2 Substitute	             *:substitute* *:s* *:su*
+:[range]s[ubstitute]/{pattern}/{string}/[flags] [count]
+
+:[range]&[&][flags] [count]	            *:&*
+	      Repeat last :substitute with same search pattern and substitute string, but without the same flags. You may add [flags]
+:[range]~[&][flags] [count]	            *:~*
+	      Repeat last substitute with same substitute string but with last used search pattern.  This is like `:&r`.  See |:s_flags| for [flags].
+&	     Synonym for `:s` (repeat last substitute); use `:&&` to keep the flags.
+g&	    Synonym for `:%s//~/&` (repeat last substitute with last search pattern on all lines with the same flags).
+
+FLAGS:
+	[&]   Must be the first one: Keep the flags from the previous substitute command.  Examples:
+	         :&&
+	         :s/this/that/&
+	      Note that `:s` and `:&` don't keep the flags.
+	[g]   Replace all occurrences in the line.
+	[i]   Ignore case for the pattern. (Zen default)
+	[I]   Don't ignore case for the pattern.
+	[n]   Report the number of matches, do not actually substitute.
+	
+	[r]   Only useful in combination with `:&` or `:s` without arguments.  `:&r` works the
+	      same way as `:~`:  When the search pattern is empty, use the previously used search
+	      pattern instead of the search pattern from the last substitute or `:global`.  If the
+	      last command that did a search was a substitute or `:global`, there is no effect.
+	      If the last command was a search command such as "/", use the pattern from that
+	      command.
+	      For `:s` with an argument this already happens:
+	         :s/blue/red/
+	         /green
+	         :s//red/   or  :~   or  :&r
+	      The last commands will replace "green" with "red".
+	         :s/blue/red/
+	         /green
+	         :&
+	      The last command will replace "blue" with "red".
+
+NOTE: Instead of the '/' which surrounds the pattern and replacement string, you
+	   can use any other single-byte character, but not an alphanumeric character,
+	   '\', '"'' or '|'.  This is useful if you want to include a '/' in the search
+	   pattern or replacement string.  Example:
+	      :s+/+//+
+
+NOTE: In Visual block mode, use "/\%V" (not including quotes) in the pattern to have the
+	   substitute work in the block only.  Otherwise it works on whole lines anyway.
+
+
+SPECIAL CHARACTERS IN SEARCH STRING:
+file:///usr/share/doc/vim-doc/html/change.html#sub-replace-special
+
+these characters in {string} have a special meaning:	  *:s%*
+When {string} is equal to "%" and '/' is included with the 'cpoptions' option,
+then the {string} of the previous substitute command is used, see file:///usr/share/doc/vim-doc/html/options.html#cpo-/
+
+	   \u    next character made uppercase
+	   \U    following characters made uppercase, until \E or \e
+	   \l    next character made lowercase
+	   \L    following characters made lowercase, until \E or \e
+	   ~     replaced with the {string} of the previous substitute
+	   \r    split line in two at this point
+	   \n    insert a null/ <NULL> at this point
+	   \b    insert a backspace/ <BS> at this point
+	   \t    insert a tab/ <TAB> at this point
+	   \\    insert a backslash
+
+Examples:
+  :s/a\|b/xxx\0xxx/g	  modifies "a b"        to "xxxaxxx xxxbxxx"
+  :s/\([abc]\)\([efg]\)/\2\1/g	 modifies "af fa bg" to "fa fa gb"
+  :s/abcde/abc^Mde/	   modifies "abcde"    to "abc", "de" (two lines)
+  :s/$/\^M/	     modifies "abcde"    to "abcde^M"
+  :s/\w\+/\u\0/g	   modifies "bla bla"  to "Bla Bla"
+  :s/\w\+/\L\u/g	   modifies "BLA bla"  to "Bla Bla"
+
+
+
+*
+\U or \L in front of backreferences for the desired conversion. Without the \E
+directive, the entire backreference, and any additional text, will be converted.
+The \E directive terminates the conversion to the upper/lower case directive.
+For example: Assume a file with this text, "This is a test"
+
+	:s/\(test\)/\U\1 file/
+
+Produces: This is a TEST FILE
+
+
+	:s/\(test\)/\U\1\e file/
+
+Produces: This is a TEST file 
+
+
+Lowercase the entire file:
+
+	:%s/.*/\L&/g
+
+(& is a handy backreference that refers to the complete text of the match.)
+
+
+Uppercase all words that are preceded by a < (i.e. opening HTML tag names):
+
+	:%s/<\(\w*\)/<\U\1/g
+
+
+
+*
+Record macro:
+	"q" # to begin
+	choose register (single letter)
+	... type commands to record ...
+	"q" # to end
+
+Run macro:
+	"@"
+	choose register (the letter key pressed above)
+
+Repeat last macro:
+	"@" "@" # press @ key twice
+
+
+*
+Reload current file, any of the following, ! means discard current changes:
+:edit
+:e
+:e!
+
+
+
+*
+Window width: CTRL-W [count] <|>
+
+
+
+*
+http://www.linux.com/article.pl?sid=06/01/24/1758249
+(http://lwn.net/Articles/169927/)
+
+I've been a (g)vim user for so long, I forgot that standard vi doesn't
+support multiple files. :vs and :sp are my friends, not to
+mention :ls, :b<num>, :e#, :bn, :bN, and of course :mksession :)
+
+I also have a handy vim function mapped to an autocmd so the cwd of vim is
+always the same as the file I'm currently editing. very handy. 
+#// vim:tw=999:ft=c
+#//
+#//
+
+
+
+*
+DOS/UNIX dos/unix line endings:  set ff=unix	 set fileformat=unix    then save (:w) yay!
+
+Vim: Search and Replace, Insert new line
+May 3rd, 2007 by Pete
+
+Vim has some really useful commands, especially search and replace ones. Unfortunately I'm always forgetting the finer details of how to use them so here's an example:
+PLAIN TEXT
+CODE:
+
+	1.
+	   :%s/$/\rthis is a new line
+
+To break down whats happening above:
+
+	 * : switches Vim into command mode
+	 * % means we're going to apply this command to every line in our file
+	 * s means we're using the substitute command. The format of the command is s/search/replacement, 'search' can be a regular expression
+	 * $ tells vim to search for the end of the line
+	 * \rthis is a new line tells vim to replace with a new line character, and to put the text "this is a new line" on that line.
+
+NOTE: \r is used as the new line character when vim is using DOS file format, to find out which file format you are using type :set ff? You can find out more about Vim file formats here.
+
+
+
+From this question. You have to use \r when replacing text for a newline, like this
+	:%s/%/\r/g
+But when replacing end of lines and newlines for a character, you can do it like:
+	:%s/\n/%/g
+What section of the manual documents these behaviors, and what's the reasoning behind them?
+From Vim docs on patterns:
+	 \r matches <CR>
+	 \n matches an end-of-line - When matching in a string instead of buffer text a literal newline character is matched.
+http://www.vim.org/htmldoc/pattern.html
+
+
+  6  vote down
+	
+:help NL-used-for-Nul
+
+	 Technical detail:
+
+	 <Nul> characters in the file are stored as <NL> in memory. In the display they are shown as "^@". The translation is done when reading and writing files. To match a <Nul> with a search pattern you can just enter CTRL-@ or "CTRL-V 000". This is probably just what you expect. Internally the character is replaced with a <NL> in the search pattern. What is unusual is that typing CTRL-V CTRL-J also inserts a <NL>, thus also searches for a <Nul> in the file. {Vi cannot handle <Nul> characters in the file at all}
+
+
+
+*
+Make vim :help work in Debian:
+https://stackoverflow.com/questions/26935404/how-to-use-help-cmd-in-vim-to-view-txt-files
+First, delete the old tags file:
+rm /usr/share/vim/vim74/doc/tags
+
+Then, run vim as root to regenerate help tags file:
+sudo vim -c 'helptags /usr/share/vim/vim74/doc' +qall
+
+Finally, fix vim's ability to read gz files for future convenience:
+https://superuser.com/questions/508425/vim-is-not-reading-gzipped-files-automatically
+
+
