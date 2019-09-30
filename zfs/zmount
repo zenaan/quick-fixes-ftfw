@@ -1,0 +1,66 @@
+#!/bin/bash
+exit # site specific, for ideas.
+
+isMounted () { DIR=`readlink -f "$1"`; mount | grep -q "on ${DIR} type"; }
+
+isDevMounted () { mount | egrep -q "/dev/${1}[0-9]*"; }
+
+sep () { echo "------------------  $* :"; }
+
+zdo () { echo -n "--> $*  ...  "; "$@"; }
+
+svc_stop () { for i in "$@"; do zdo systemctl stop $i; done; echo; }
+
+un_mount () { for i in "$@"; do isMounted "$i" && zdo umount "$i"; done; echo; }
+
+crypt_pool_open () {
+	for i in $*; do
+		zdo cryptsetup open /zpis1t/krypt/$i $i
+		zdo zpool import $i
+		echo
+	done; echo; }
+
+crypt_pool_close () {
+	for i in "$@"; do
+		test -e "/dev/mapper/$i" && {
+			zdo zpool export $i
+			zdo cryptsetup close /dev/mapper/$i
+		}
+	done
+	echo
+}
+
+pool_import   () { for i in $*; do zdo zpool import $i; done; echo; }
+
+pool_export   () { for i in $*; do zdo zpool export $i; done; echo; }
+
+spin_down_hdd () { for i in $*; do isDevMounted $i && zdo hdparm -y "$i"; done; echo; }
+
+status_info_notes_warns () {
+	df -h
+	echo -e "\nNOTE: Unplug USB drives before rebooting..."
+	# TODO
+}
+
+zumount () {
+	sep "stop services"
+	svc_stop         lightdm.service lightdm.socket user@1000 user-1000.slice
+	sep "umounts"
+	un_mount         /media/h500g /media/zen/* /media/zen/pools/* /mnt
+	sep "encrypted zpool exports and cryptsetup close"
+	crypt_pool_close z00{2..9}-s z000-s z001-s
+	sep "zpool exports"
+	pool_export      zpis1t
+	sep "spin down HDDs"
+	spin_down_hdd    sd{b..z}
+	sep "DONE, but check if errors above"
+	status_info_notes_warns
+}
+
+zmount () {
+	pool_import      zpis1t
+	crypt_pool_open  z001-s z000-s #z002-s
+	mount --bind /home/d00 /home/zen
+}
+
+`basename $0`

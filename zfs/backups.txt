@@ -1,0 +1,33 @@
+
+
+*
+import withOUT mounting (add -N):
+https://unix.stackexchange.com/questions/296972/how-to-mount-external-zfs-file-system-without-clobbering-altering-current-or-ext
+
+
+*
+Example: catch up on one missing zfs filesystem snapshot on a pool backup, so we don't have to do a recursive from an earlier point for all the other filesystems:
+zfs send -vRwI zpis1t/krypt@20190914 zpis1t/krypt@20190920-13.32 | zfs receive -vduF -o canmount=noauto bak1t/zpis1t
+
+And next, recursively backup all filesystems from that sync point (snapshot), to the backup drive:
+
+
+*
+Hardcore unwind/ force on faulty pool/disk:
+https://superuser.com/questions/685882/zpool-pool-i-o-is-currently-suspended
+zpool clear -nFX bak1t
+
+
+*
+details system/recursive backup/snapshot and send + receive steps:
+https://forums.freebsd.org/threads/using-zfs-to-carry-out-full-system-backup-through-snapshots.49497/
+
+
+*
+Other links:
+	overlapping mountpoints and backups (i.e. use "-o canmount=noauto"):
+	https://www.reddit.com/r/zfs/comments/a1wrd8/overlapping_mountpoints_when_backing_up_poola_to/
+
+	recursive incremental send, -d/-e relative recieve
+	https://ptribble.blogspot.com/2012/09/recursive-zfs-send-and-receive.html
+
