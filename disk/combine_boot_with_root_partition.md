@@ -57,9 +57,9 @@ Including the `$SHLVL` env var somewhere in your PS1 prompt may alternatively as
 similar way.
 
 ## See also
-	- https://askubuntu.com/questions/3402/how-to-move-boot-and-root-partitions-to-another-drive
-	- https://help.ubuntu.com/community/Grub2/Installing#Reinstalling_GRUB_2
-	- fdisk -l /dev/sda
-	- ls -l /dev/disk/by-id
-	- ls -l /dev/disk/by-uuid
-	- https://www.linuxquestions.org/questions/linux-software-2/grub2-moving-boot-to-separate-partition-909761/
+ - https://askubuntu.com/questions/3402/how-to-move-boot-and-root-partitions-to-another-drive
+ - https://help.ubuntu.com/community/Grub2/Installing#Reinstalling_GRUB_2
+ - fdisk -l /dev/sda
+ - ls -l /dev/disk/by-id
+ - ls -l /dev/disk/by-uuid
+ - https://www.linuxquestions.org/questions/linux-software-2/grub2-moving-boot-to-separate-partition-909761/

@@ -40,6 +40,6 @@ set per-project, only per-user).
 
 ### See also
 
- - (Messy Vim notes snippets)[vim.txt]
- - (Vim status line rando snippets)[vim-status-line.txt]
+ - [Messy Vim notes snippets](vim.txt)
+ - [Vim status line rando snippets](vim-status-line.txt)
 
