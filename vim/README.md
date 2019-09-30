@@ -17,14 +17,16 @@ set per-project, only per-user).
 
 ## Install and use
 
-    # make the Vim quick-fixes available to your local Vim:
-    ln -s ~/dev/q/quick-fixes-ftfw/vim/quick_fixes.vim ~/.vim/autoload/
+```sh
+# make the Vim quick-fixes available to your local Vim:
+ln -s ~/dev/q/quick-fixes-ftfw/vim/quick_fixes.vim ~/.vim/autoload/
 
-    # insert shortcuts header into .vim/vimrc :
-    echo -e "\n\" quick-fixes-ftfw/vim/quick_fixes.vim keyboard shortcuts:" >> ~/.vim/vimrc
+# insert shortcuts header into .vim/vimrc :
+echo -e "\n\" quick-fixes-ftfw/vim/quick_fixes.vim keyboard shortcuts:" >> ~/.vim/vimrc
 
-    # assign <F1> keyboard shortcut to Toggle_max_line_indicator():
-    echo -e "\nnnoremap <F1> :call quick_fixes#Toggle_max_line_indicator()<CR>" >> ~/.vim/vimrc
+# assign <F1> keyboard shortcut to Toggle_max_line_indicator():
+echo -e "\nnnoremap <F1> :call quick_fixes#Toggle_max_line_indicator()<CR>" >> ~/.vim/vimrc
+```
 
 
 ## Notes/ things learnted

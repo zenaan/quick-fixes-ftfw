@@ -25,31 +25,33 @@ dirs, use `rsync` and in either case, delete any files from sub-mounts mounted i
 Procedure is as follows - tested on Debian sid amd64 arch, 20190929 - just insert the
 correct drive letter (usually not a partition) on the grub-install line below:
 
-    sudo su -                       # run the following commands as root
-    mount --bind / /mnt
-    test -e /mnt/boot/grub && exit  # if /mnt/boot not empty, you're on your own :)
-    rsync -av --exclude={'/lost+found/','/efi/*'} /boot/ /mnt/boot/
+```sh
+sudo su -                       # run the following commands as root
+mount --bind / /mnt
+test -e /mnt/boot/grub && exit  # if /mnt/boot not empty, you're on your own :)
+rsync -av --exclude={'/lost+found/','/efi/*'} /boot/ /mnt/boot/
 
-    edit /etc/fstab                 # comment out the "/boot" entry, but leave /boot/efi as is
-    edit /etc/default/grub          # double check this
+edit /etc/fstab                 # comment out the "/boot" entry, but leave /boot/efi as is
+edit /etc/default/grub          # double check this
 
-    # Set up our /mnt chroot for grub-install to work properly, then update-grub + grub-install:
-    for i in boot/efi sys proc dev dev/pts run; do mount --bind /$i /mnt/$i; done
-    chroot /mnt /bin/bash -il       # login to temporary env for grub
-    update-grub                     # create new grub.cfg (Grub menu)
-    edit /mnt/boot/grub/grub.cfg    # have a look see
-    grub-install /dev/sdX           # magical incantation - choose correct drive here (usually 'sda')
-    # If all goes well, at this point you should see the following output (without "#"):
-    # Installing for x86_64-efi platform.
-    # Installation finished. No error reported.
+# Set up our /mnt chroot for grub-install to work properly, then update-grub + grub-install:
+for i in boot/efi sys proc dev dev/pts run; do mount --bind /$i /mnt/$i; done
+chroot /mnt /bin/bash -il       # login to temporary env for grub
+update-grub                     # create new grub.cfg (Grub menu)
+edit /mnt/boot/grub/grub.cfg    # have a look see
+grub-install /dev/sdX           # magical incantation - choose correct drive here (usually 'sda')
+# If all goes well, at this point you should see the following output (without "#"):
+# Installing for x86_64-efi platform.
+# Installation finished. No error reported.
 
-    # Clean up:
-    exit                            # exit from chroot
-    for i in run dev/pts dev proc sys boot/efi; do umount /mnt/$i; done
-    umount /mnt
-    reboot                          # reboot and hope it works...
+# Clean up:
+exit                            # exit from chroot
+for i in run dev/pts dev proc sys boot/efi; do umount /mnt/$i; done
+umount /mnt
+reboot                          # reboot and hope it works...
+```
 
-*Note:* Regarding the `chroot` command above, the `-il` option to bash ensures that .profile
+**_Note:_** Regarding the `chroot` command above, the `-il` option to bash ensures that .profile
 and/ or .bashrc are read/processed by Bash; it may be useful and/or prudent to disclude the
 `-il` options to Bash, and make do with a default prompt, so that it is abundantly clear to you
 that you are not in a 'normal' login, but a chroot, which may help avoid mistakes.
