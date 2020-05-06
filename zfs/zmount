@@ -46,7 +46,7 @@ zumount () {
 	sep "stop services"
 	svc_stop         lightdm.service lightdm.socket user@1000 user-1000.slice
 	sep "umounts"
-	un_mount         /media/h500g /media/zen/* /media/zen/pools/* /mnt
+	un_mount         /media/h500g /media/zen/* /media/zen/pools/* /mnt /home/zen
 	sep "encrypted zpool exports and cryptsetup close"
 	crypt_pool_close z00{2..9}-s z000-s z001-s
 	sep "zpool exports"
@@ -55,6 +55,7 @@ zumount () {
 	spin_down_hdd    sd{b..z}
 	sep "DONE, but check if errors above"
 	status_info_notes_warns
+	# next, do normal OS shutdown, eg run "poweroff"
 }
 
 zmount () {

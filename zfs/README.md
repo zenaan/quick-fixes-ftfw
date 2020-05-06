@@ -24,11 +24,11 @@ reading and experimenting brings comfortability.
  - ZoL (ZFS on Linux) as at 2019 commands will HANG if you disconnect a single-drive `zpool`
    (e.g. a USB drive being the storage for a single zpool) without first running **`zpool
    export`** !  The only way to get the various hung `zfs` and `zpool` commands working again,
-   is to reboot! This is unfortunate since ZFS is a wonderful filesystem to use on USB drive.
+   is to reboot!  This is unfortunate since ZFS is a wonderful filesystem to use on USB drives.
 
- - Use ZFS on your USB attached drives - backups become a breath of fresh air, and joy to use
-   (within a short learning curve achieved at least), and thereby become a daily affair, rather
-   than a yearly "if your lucky" affair.
+ - Use ZFS on your USB attached drives - backups become a breath of fresh air and joy to use
+   (within a short learning curve achieved at least), and thereby an easy daily affair, rather
+   than yearly "if you're lucky."
 
  - A recursive snapshot followed by send | receive is so simple, use it!
 
@@ -62,7 +62,7 @@ encryption (FDE) and with Debian as at 2019 this is usually an `ext4` filesystem
 # Do all the following as root. WARNING, the following assumes you can login as root without
 # using sudo; adjust accordingly if you need other.
 
-# make sure user is logged out, reboot and only log in as root to ensure it's clean.
+# make sure user is logged out, reboot and only log in as root to ensure clean environment.
 PRIMARY_USER=`id -un 1000`
 PRIMARY=datapool  # assuming primary "datapool" is mounted at "/datapool"
 zpool create -o ashift=12 -O relatime=on -O compression=on -O -m /$PRIMARY $PRIMARY /dev/sdaX  # choose dev name carefully
@@ -73,7 +73,7 @@ chown root.root /home/$PRIMARY_USER  # make sure user cannot mistake being in $H
 # encrypted volumes are not compressible:
 zfs create -o compression=off $PRIMARY/krypt  # if you have >1 user, create '$PRIMARY/$USER/krypt'
 
-# create common krypts per-user mount point, vastly simplifies future scripting:
+# create 'standard' "krypts" per-user mount point, vastly simplifies future scripting:
 mkdir -p /krypt/$PRIMARY_USER  # leave owner as root.root
 
 make_krypt () {
@@ -81,7 +81,7 @@ make_krypt () {
 	KRYPT=$PRIMARY/krypt/$VNAME
 	KMOUNT=/krypt/$PRIMARY_USER/$VNAME/$VNAME  # This is a useful hierarchy in recovery ops!
 
-	dd of=$KRYPT count=0 seek=1 bs=$SIZE
+	dd of=$KRYPT count=0 seek=1 bs=$SIZE       # create sparse file (seek, not count/write!)
 	cryptsetup -y luksFormat $KRYPT            # this asks for password to be repeated
 	cryptsetup open $KRYPT $VNAME              # HDD version
 	# cryptsetup open --allow-discards $KRYPT $VNAME  # SSD version
@@ -103,11 +103,11 @@ make_krypt v002 10T    # sparse data/ VMs etc krypt
 
 # set up $HOME:
 HOME_NAME=${PRIMARY_USER}-deb10  # this is the zfs filesystem name we shall use ("debian 10")
-zfs create v001/$HOME_SRC
+zfs create v001/$HOME_NAME
 HOME_SRC=/krypt/$PRIMARY_USER/v001/v001/$HOME_NAME
 chown $PRIMARY_USER. $HOME_SRC
 
-# the magical bind mount - do NOT do this whilst logged in as the user (not root),
+# the magical bind mount - do NOT do this whilst PRIMARY_USER is logged in anywhere (do as root)
 # i.e. make sure ALL PRIMARY_USER logins, are logged out. :
 #mount --bind $HOME_SRC /home/$PRIMARY_USER  # see section below "login, logout, bringup, teardown"
 # Now you can login as PRIMARY_USER
@@ -150,7 +150,7 @@ In the meantime (after having done the initialization/ setup above), boot up, th
 graphical login prompt, press e.g. `<CTRL>-<ALT>-<F6>` to go to a Linux console, then bringup:
 
 ```bash
-# On bootup at graphical login screen, press <CTRL>-<ALT>-<F6> and login as root, then:
+# On bootup at graphical login screen, press <CTRL>-<ALT>-<F6>, then login as root, then:
 # This is the bringup - import primary ZFS datapool, unlock krypts, import those zpools:
 zfs import $PRIMARY
 unlock_and_mount () {
@@ -174,7 +174,7 @@ mount --bind /krypt/$PRIMARY_USER/v001/v001 /home/$PRIMARY_USER
 Finally the difficult part which would be nice to automate with appropriate systemd config:
 
 ```bash
-# Logout (NOT shutdown) of your graphical desktop, press <CTRL>-<ALT>-<F6> and
+# Logout (NOT shutdown) of your graphical desktop, then press <CTRL>-<ALT>-<F6> and
 # login as root, then:
 systemctl stop $PRIMARY_USER@1000
 systemctl stop $PRIMARY_USER-1000.slice  # only needed if something non standard happened
