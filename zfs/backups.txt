@@ -7,9 +7,12 @@ https://unix.stackexchange.com/questions/296972/how-to-mount-external-zfs-file-s
 
 *
 Example: catch up on one missing zfs filesystem snapshot on a pool backup, so we don't have to do a recursive from an earlier point for all the other filesystems:
+("zpis1t" is 'primary' pool)
 zfs send -vRwI zpis1t/krypt@20190914 zpis1t/krypt@20190920-13.32 | zfs receive -vduF -o canmount=noauto bak1t/zpis1t
 
 And next, recursively backup all filesystems from that sync point (snapshot), to the backup drive:
+
+TODO
 
 
 *

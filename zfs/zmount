@@ -1,6 +1,7 @@
 #!/bin/bash
 exit # site specific, for ideas.
 
+# this test catches bind mounts; newer versions of "mountpoint" may provide this ??
 isMounted () { DIR=`readlink -f "$1"`; mount | grep -q "on ${DIR} type"; }
 
 isDevMounted () { mount | egrep -q "/dev/${1}[0-9]*"; }

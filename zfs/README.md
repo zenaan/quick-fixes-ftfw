@@ -80,6 +80,7 @@ make_krypt () {
 	VNAME=$1; SIZE=$2
 	KRYPT=$PRIMARY/krypt/$VNAME
 	KMOUNT=/krypt/$PRIMARY_USER/$VNAME/$VNAME  # This is a useful hierarchy in recovery ops!
+	#/krypt/$PRIMARY_USER/$VNAME/tmp           # Example rec ops "safe" tmp mount
 
 	dd of=$KRYPT count=0 seek=1 bs=$SIZE       # create sparse file (seek, not count/write!)
 	cryptsetup -y luksFormat $KRYPT            # this asks for password to be repeated
@@ -94,6 +95,7 @@ make_krypt () {
 	chown $PRIMARY_USER.$PRIMARY_USER $KMOUNT  # only now, the mounted fs is writable by PRIMARY_USER
 	# (still, e.g. for VM disks, you may want to keep as root.USER or something ? .. whatever works)
 
+	echo "You just created a krypt vol for $PRIMARY_USER at $KMOUNT :"
 	df -h  $KMOUNT  # give yourself a reminder you now have a place to put stuff
 }
 # create krypt vols as files in parent zfs volume, standard dest mount, etc:

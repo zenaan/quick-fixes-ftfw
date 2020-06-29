@@ -2,9 +2,14 @@
 see:
 	disk.txt (really)
 
+	#1 zfs learning resource!
+	https://pthree.org/2012/12/20/zfs-administration-part-xiii-sending-and-receiving-filesystems/
+
 	https://www.thegeekdiary.com/the-ultimate-zfs-interview-questions/?PageSpeed=noscript     # good summary / tutorial here (+I still use man pages)
 	https://www.howtoforge.com/tutorial/how-to-install-and-configure-zfs-on-debian-8-jessie/  # this looks technical/ detailed
-	vms: https://github.com/zfsonlinux/zfs/issues/224
+
+	VMs:
+		https://github.com/openzfs/zfs/pull/7823
 		Don't store RAW files as ZFS as files. There is no benefit and it is not as fast as it could be. ZVOL is perfect for that and you can snapshot a VM at a time and you have a constant (vol)block size.
 		On the other hand, zol is young and in particular zvols appear to have some genuine zfs-internal code issues (bugs) as at 20180905 - where perf not an issue, files for e.g. luks/cryptsetup/veracrypt backing are just fine.
 
@@ -15,6 +20,9 @@ Summary:   zpool  zfs
 	zfs [un]mount
 
 	zpool list
+	zpool list -vP
+	zpool list -vPL
+
 	zpool history [poolName]
 
 	zpool import -d /dev/disk/by-id                             # attach a drive, then see what can be used/ imported by zpool:
@@ -24,9 +32,18 @@ Summary:   zpool  zfs
 	zpool export -f name                                        # force export (forces/tries to unmount all mounts of this drive's zfs filesystems)
 
 	# zfs pools (disks/ disk groups), ashift option is sector size, 2^12=4096 bytes, default mountpoint is /zpool-name ;
-	# ashift is not always properly detected, and severely affects performance:
-	zpool create -o ashift=12 -O relatime=on -O compression=on -O -m target-mountpoint poolname device   # on Linux, ONLY use /dev/disk/by-[uu]id/... names!
+	# ashift is not always properly detected, and severely affects performance.
+	# On Linux, ONLY use /dev/disk/by-[uu]id/... names when creating new pools!
 	zpool create -o ashift=12 poolName /dev/disk/by-uuid/...
+	zpool create -o ashift=12 poolName /dev/disk/by-id/...
+
+	zpool create -o ashift=12 -O relatime=on -O compression=on -m target-mountpoint poolname device
+
+	# For backup pools, canmount=noauto (but still mounted at pool creation):
+	zpool create -o ashift=12 -O relatime=on -O compression=on -O canmount=noauto -m bu_mnt bu_pool dev
+
+	# Since we might still use bu_pool as scratch/emergency space etc, put backups in a tidy sub fs:
+	zfs create bu_pool/bu
 
 		# dmc "device mapper crypt vol -
 	zpool create -o ashift=12 -O relatime=on -O compression=on -m target-mountpoint dmcv- /dev/disk/by-id/dm-uuid-CRYPT-LUKS1-...
@@ -58,26 +75,121 @@ Summary:   zpool  zfs
 	zfs set relatime=on pool/youtube                            # set property after creation
 	zfs set mountpoint=/z/dev pool/dev
 
-	# snashots are read only (light weight):
+	# snashots are read only and light weight, use liberally for backups:
 	zfs list -t [ snap | snapshot | all ]
 	zfs list -t snapshot -o name -s name                        # use this version if you have many 100s or 1000s of snapshots and performance is an issue
+
+	# as at 20200629, must add `-r` when specifying `filesystem` and naming a filesystem, see https://github.com/openzfs/zfs/issues/10130 , e.g. this should work:
+	zfs list -rt filesystem,snap pool1
+
+	# USE ISO date format in your snapshot names - this makes scripting and listing etc work really well.
+	# e.g. yyyyMMdd or yyyy-MM-dd , e.g. 20201130 or 2020-11-30
 
 	zfs snapshot [-r] pool/filesystem@20180831                  # create a snapshot (-r means recursively for all sub-datasets (filesystems, volumes))
 	zfs rollback pool/filesystem@20180831                       # rollback a zfs filesystem to a previous point in time (marked by a snapshot) - destroys snapshots and bookmarks that are more recent than the named snapshot
 	zfs destroy pool/filesystem@20180831
 
-	# backups - the following is insufficiently clear, need more examples TODO:
-	# create initial full backup of a zpool, all its filesystems, volumes, snapshots, properties etc
-	# (remember, the root fs name is the same as the pool name):
-	zfs send -Rcv fs1@snapshot | zfs receive -d fs2             # check man zfs the "-d" option discards the parent (root/ poolname) path component (default new target mount dir)
+
+	# ==================================================================
+	# ZFS Backups
+
+	# --------------
+	# Step 0 - First create at least 1 snapshot of the source filesystem you want to backup.
+
+	# Locate the source pool you are going to backup to the target drive:
+	SRC_POOL=pool1
+
+	# Locate/name the source snapshot you will use to make a backup (ISO date format works really well):
+	SRC_SNAP=20200628
+
+	SNAPSHOT=$SRC_POOL@$SRC_SNAP
+
+	# If you have not done so already, make a recursive snapshot of your pool and all its sub filesystems:
+	zfs snapshot -r $SNAPSHOT
+
+	# Have a look see:
+	zfs list -rt snap,filesystem $SRC_POOL
+
+
+	# --------------
+	# Step 1 - Init new (e.g. USB) 'backups' disk/drive.
+
+	# Connect USB drive and create a "backup" pool containing this drive (single-drive zfs zpool):
+	ZP_BAK=zb2t01          # backup drive's  a) pool name,  b) pool's root fs name, and  c) pool/root-fs mountpoint basename
+	DMNT=/media/zen/pool   # tmp/bak pool's parent mount dir
+	mkdir $DMNT
+	BAK_DEV=/dev/disk/by-id/ata-TOSHIBA_MQ040000001   # ALWAYS use by-id or by-uuid - NEVER use /dev/sd[bcdX] !!
+
+	zpool create -o ashift=12 -O relatime=on -O compression=on -O canmount=noauto -m $DMNT/$ZP_BAK $ZP_BAK $BAK_DEV
+
+	# Create bak drive (sub) filesystem "bu" to contain backups, and create a sub-sub filesystem to contain the source pool's backups:
+	zfs create $ZP_BAK/bu
+	BAK_DEST=$ZP_BAK/bu/$SRC_POOL
+	zfs create $BAK_DEST
+
+
+	# --------------
+	# Step 2 - Create initial "full" source pool backup.
+
+	# Step 2.b - On any -new- target backup device, create a "full" (i.e. non-incremental!) zfs filesystem stream, e.g.:
+	zfs send -cvR $SNAPSHOT | zfs receive -vudF -o canmount=noauto $BAK_DEST
+
+	# Step 2.a - alternatively, install `pv`, and then do a zfs dry run as follows:
+	zfs send -ncvR $SNAPSHOT
+
+	# and in the output, look for the line "total estimated size is 194G" (your total should be different), and set estimated size:
+	SIZE=194G   # NOTE: `pv` does NOT accept decimal place - so just round up or down
+
+	# then run your initial "full" backup as follows:
+	zfs send -cvR $SNAPSHOT | pv -petars $SIZE | zfs recv -vudF -o canmount=noauto $BAK_DEST
+
+
+	# --------------
+	# Step 3 - Backup is finished, so now export the backup pool (this is similar to umount):
+	zpool export $ZP_BAK
+
+	# and spin down the disk drive (if it's a magnetic rust bucket HDD):
+	hdparm -y $BAK_DEV
+
+	# and finally wait about 6 seconds for the HDD to stop spinning, then you may safely unplug your zpool backup drive and store in a cool, dry, dust-free location.
+
+
+	# --------------
+	# Step 4 - Do a subsequent "incremental" zfs zpool backup (assumes prior "full" backup).
+
+	# Some time goes by, perhaps a day, and now we want to do just an incremental backup of the delta since yesterday;
+
+	# So we make a new recursive snapshot:
+	SRC_SNAP2=20200629
+	SNAPSHOT2=$SRC_POOL@$SRC_SNAP2
+	zfs snapshot -r $SNAPSHOT2
+
+	# Connect your USB backups drive, wait a few seconds, then ask zfs to tell us if there is a valid pool which could be imported:
+	zpool import
+	# if your backup pool is not shown, something went wrong; if it is shown, import it without mounting:
+	zpool import -N $SRC_POOL
+
+	# This time we make an incremental ("-I" option) backup:
+	# dry run again:
+	zfs send -ncvRI $SNAPSHOT $SNAPSHOT2
+
+	# set size again:
+	SIZE=17M  # change according to output of dry run
+
+	# and this time we do the actual, but incremental, backup:
+	zfs send -cvRI $SNAPSHOT $SNAPSHOT2 | pv -petars $SIZE | zfs recv -vudF -o canmount=noauto $BAK_DEST
+
+	# ==================================================================
+
 
 	# Example: backup source "zpis1t/..." pool (and all sub fs/vols/snaps, up to snapshot "20190920-13.32"), creating/copying source into target pool/fs "bak1t/backups/zpis1t/...":
 	zfs snapshot -r zpis1t@20190920-13.32                       # create recursive snapshot of zpis1t pool/fs
-	zfs create bak1t/backups                                    # create parent zfs filesystem that I want to store these backups into
-	zfs send -Rcv zpis1t@20190920-13.32 | zfs receive -d bak1t/backups/zpis1t  # create full recursive backup
+	zfs create bu_pool/bu/zpis1t                                # create parent zfs filesystem that I want to store these backups into
+	zfs send -vwR zpis1t@20190920-13.32 | zfs receive -vduF bu_pool/bu/zpis1t  # create full recursive backup (no `-I`)
 
 	# to do similar, but make the backup drive a new primary, i.e. creating/copying source into target pool/fs "bak1t/...":
-	zfs send -Rcv zpis1t@20190920-13.32 | zfs receive -d bak1t/zpis1t  # send to backup drive/pool
+	zfs send -Rcv zpis1t@20190920-13.32 | zfs receive -d bak1t  # send to backup drive/pool, it will be a new "primary" drive
+	# but NOTE, zfs (and zpool) have easy and powerful `zfs rename` commands
 
 	# See also:
 	#   Make send/ receive resumable:
@@ -100,7 +212,9 @@ Summary:   zpool  zfs
 	# local tested send/receive:
 	zfs send -vRwI primary/krypt@20190914 primary/krypt@20190920 | zfs receive -vduF -o canmount=noauto bak1t/primary
 
-	# clones are just zfs filesystems or "read-write snapshots" (made from snapshots):
+
+
+	# clones are zfs filesystems or "read-write snapshots" (made from snapshots), hevy use devolves- orig blocks unused and not reclahmable:
 	zfs clone pool/fs1@snapName pool/fs1/cloneName              # create clone as sub-filesystem
 	zfs clone pool/fs1@snapName pool/cloneName                  # create clone as separate filesystem
 	zfs destroy pool/cloneName                                  # delete the clone
@@ -151,9 +265,10 @@ A zfs filesystem is also called a dataset (especially in the zfs man page).
 
 Show the mountpoint for the root zfs filesystem in a pool that is imported and root filesystem mounted:
 zfs list | grep fs_name
-zfs get -o mountpoint fs_name
-zfs get -Ho mountpoint fs_name
-zfs get -Hro mountpoint fs_name
+zfs get mountpoint fs_name
+zfs get -H mountpoint fs_name
+zfs get -Hr mountpoint fs_name
+zfs get -Hrt filesystem mountpoint fs_name
 
 Change the default mountpoint for a zpool's root filesystem:
 zfs set mountpoint=/new/mount/point fs_name

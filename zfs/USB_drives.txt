@@ -1,0 +1,13 @@
+
+ZFS and USB drives:
+
+ZoL does not yet "unwind" gracefully with reconnected drives which (in the least) use generic
+device names such as /dev/sdc
+
+This is unfortunate as ZFS is a great fs to use on USB drives.
+
+See:
+
+	https://github.com/openzfs/zfs/issues/7866
+	https://github.com/openzfs/zfs/issues/5242
+
