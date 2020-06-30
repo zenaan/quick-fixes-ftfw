@@ -14,8 +14,14 @@
 
 	VMs:
 		https://github.com/openzfs/zfs/pull/7823
-		Don't store RAW files as ZFS as files. There is no benefit and it is not as fast as it could be. ZVOL is perfect for that and you can snapshot a VM at a time and you have a constant (vol)block size.
-		On the other hand, zol is young and in particular zvols appear to have some genuine zfs-internal code issues (bugs) as at 20180905 - where perf not an issue, files for e.g. luks/cryptsetup/veracrypt backing are just fine.
+
+		"Don't store RAW files on ZFS as files. There is no benefit and it is not as fast as it
+		could be. ZVOL is perfect for that and you can snapshot a VM at any time and you have a
+		constant (vol)block size."
+
+		On the other hand, zol is young and in particular zvols have some genuine
+		zfs-internal code issues (bugs) as at 20200701 - where perf not an issue, files for e.g.
+		luks/cryptsetup/veracrypt backing are just fine.
 
 ------------------------------------------------------------------
 ## Cmd summary
