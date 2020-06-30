@@ -1,8 +1,12 @@
 
-see:
+# ZFS Cheatsheet + Backups tutorial
+
+------------------------------------------------------------------
+## Toplist
+
 	disk.txt (really)
 
-	#1 zfs learning resource!
+	#1 zfs learning resource! :
 	https://pthree.org/2012/12/20/zfs-administration-part-xiii-sending-and-receiving-filesystems/
 
 	https://www.thegeekdiary.com/the-ultimate-zfs-interview-questions/?PageSpeed=noscript     # good summary / tutorial here (+I still use man pages)
@@ -13,7 +17,8 @@ see:
 		Don't store RAW files as ZFS as files. There is no benefit and it is not as fast as it could be. ZVOL is perfect for that and you can snapshot a VM at a time and you have a constant (vol)block size.
 		On the other hand, zol is young and in particular zvols appear to have some genuine zfs-internal code issues (bugs) as at 20180905 - where perf not an issue, files for e.g. luks/cryptsetup/veracrypt backing are just fine.
 
-Summary:   zpool  zfs
+------------------------------------------------------------------
+## Cmd summary
 
 	# info:
 	zfs list
@@ -90,11 +95,11 @@ Summary:   zpool  zfs
 	zfs destroy pool/filesystem@20180831
 
 
-	# ==================================================================
-	# ZFS Backups
+------------------------------------------------------------------
+## ZFS Backups - send/recv
 
-	# --------------
-	# Step 0 - First create at least 1 snapshot of the source filesystem you want to backup.
+--------------
+### Step 0 - Create at least 1 snapshot of source pool/filesystem to backup
 
 	# Locate the source pool/filesystem you are going to backup to the target drive:
 	zpool list
@@ -115,8 +120,8 @@ Summary:   zpool  zfs
 	zfs list -rt snap,filesystem $SRC_POOL
 
 
-	# --------------
-	# Step 1 - Init new (e.g. USB) 'backups' disk/drive.
+--------------
+### Step 1 - Init new (e.g. USB) 'backups' disk/drive
 
 	# NOTE: some newer (as at 2020) SSDs need ashift=13 (8k sector/block size)!
 
@@ -146,8 +151,8 @@ Summary:   zpool  zfs
 	zfs list $BAK_POOL
 
 
-	# --------------
-	# Step 2 - Create initial "full" source pool backup.
+--------------
+### Step 2 - Create initial "full" source pool backup
 
 	# Step 2.c - On any -new- target backup device, we usually first create a "full" (i.e.
 	# non-incremental!) zfs filesystem stream, e.g.:
@@ -164,8 +169,11 @@ Summary:   zpool  zfs
 	zfs send -cvR $SNAPSHOT | pv -petars $SIZE | zfs recv -vudF -o canmount=noauto $BAK_DEST
 
 
-	# --------------
-	# Step 3 - Backup is finished, so now export the backup pool (this is similar to umount):
+--------------
+### Step 3 - Export and unplug backup drive(s)
+
+	# Backup is finished, so now export the backup pool (this is similar to umount)
+
 	zpool export $BAK_POOL
 
 	# and spin down the disk drive(s) to be unplugged (if it's a magnetic rust bucket HDD):
@@ -175,8 +183,8 @@ Summary:   zpool  zfs
 	# unplug your zpool backup drive(s) and store in a clean, cool, dry, dust-free location.
 
 
-	# --------------
-	# Step 4 - Do a subsequent "incremental" zfs zpool backup (assumes prior "full" backup).
+--------------
+### Step 4 - Do subsequent "incremental" zfs zpool backup (assumes prior "full" backup)
 
 	# Some time goes by, perhaps a day, and now we want to do just an incremental backup of the
 	# delta since yesterday;
@@ -209,8 +217,8 @@ Summary:   zpool  zfs
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
 
-	# --------------
-	# Step 5 - Easily create a full additional backup drive.
+--------------
+### Step 5 - Easily create a full additional backup drive.
 
 	# Some time goes by, perhaps a week, and a second separate full backup drive is wanted.
 
@@ -241,8 +249,8 @@ Summary:   zpool  zfs
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
 
-	# --------------
-	# Step 6 - Do a full scan (check for errors) of your backup drive(s)/ bak pool:
+--------------
+### Step 6 - Do a full scan (check for errors) of your backup drive(s)/ bak pool
 
 	# First attach one or more of your backup drives, wait for them to spin up, then import:
 	zpool import -N $BAK_POOL
@@ -256,8 +264,8 @@ Summary:   zpool  zfs
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
 
-	# --------------
-	# Step 7 - Easily create a replacement backup drive to replace a bad backup drive.
+--------------
+### Step 7 - Easily replace a bad/failing backup drive
 
 	# If one of your two backup (mirror) drives is lost or damaged, plug in the still good
 	# drive, then plug in a new ("third") backup drive to replace the bad/dead drive, and then
@@ -283,8 +291,8 @@ Summary:   zpool  zfs
 
 
 
-	# ==================================================================
-
+------------------------------------------------------------------
+## Moar commands
 
 	# Example: backup source "zpis1t/..." pool (and all sub fs/vols/snaps, up to snapshot "20190920-13.32"), creating/copying source into target pool/fs "bak1t/backups/zpis1t/...":
 	zfs snapshot -r zpis1t@20190920-13.32                       # create recursive snapshot of zpis1t pool/fs
@@ -315,7 +323,6 @@ Summary:   zpool  zfs
 
 	# local tested send/receive:
 	zfs send -vRwI primary/krypt@20190914 primary/krypt@20190920 | zfs receive -vduF -o canmount=noauto bak1t/primary
-
 
 
 	# clones are zfs filesystems or "read-write snapshots" (made from snapshots), hevy use devolves- orig blocks unused and not reclahmable:
@@ -358,33 +365,29 @@ Summary:   zpool  zfs
 	zpool import -d /dev/disk/by-uuid/ pool
 
 
+------------------------------------------------------------------
+## Notes
 
-
-*
-
-
-
-*
 A zfs filesystem is also called a dataset (especially in the zfs man page).
 
 Show the mountpoint for the root zfs filesystem in a pool that is imported and root filesystem mounted:
-zfs list | grep fs_name
-zfs get mountpoint fs_name
-zfs get -H mountpoint fs_name
-zfs get -Hr mountpoint fs_name
-zfs get -Hrt filesystem mountpoint fs_name
+	zfs list | grep fs_name
+	zfs get mountpoint fs_name
+	zfs get -H mountpoint fs_name
+	zfs get -Hr mountpoint fs_name
+	zfs get -Hrt filesystem mountpoint fs_name
 
 Change the default mountpoint for a zpool's root filesystem:
-zfs set mountpoint=/new/mount/point fs_name
-zfs set mountpoint=/new/mount/point zpool_name
-# note that fs_name is the same as zpool_name, for the root dataset/ root filesystem on that zfs pool
+	zfs set mountpoint=/new/mount/point fs_name
+	zfs set mountpoint=/new/mount/point zpool_name
 
-# or same, for a sub filesystem/ volume:
-zfs set mountpoint=/new/mount/point fs_name/fs2_name
+Note that `fs_name` is the same as `zpool_name`, for the root dataset/ root filesystem on that
+zfs zpool.
+
+Or same, for a sub filesystem/ volume:
+	zfs set mountpoint=/new/mount/point fs_name/fs2_name
 
 
-
-*
-copy/duplicate a zfs volume/filesystem, from one pool to another, and monitor the transfer (assumes ~85G to be transferred, modify to suit of course):
-zfs send zpih2t/z/vms | pv -petars 85G | zfs receive zpis1t/z/vms
+Copy/duplicate a zfs volume/filesystem, from one pool to another, and monitor the transfer (assumes ~85G to be transferred, modify to suit of course):
+	zfs send zpih2t/z/vms | pv -petars 85G | zfs receive zpis1t/z/vms
 
