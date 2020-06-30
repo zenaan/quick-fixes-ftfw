@@ -224,7 +224,7 @@
 
 
 --------------
-### Step 5 - Easily create a full additional backup drive.
+### Step 5 - Easily create a full additional backup drive
 
 	# Some time goes by, perhaps a week, and a second separate full backup drive is wanted.
 
@@ -266,6 +266,9 @@
 
 	# Check the scrub status as it runs:
 	zpool status $BAK_POOL
+
+	# If a drive has problems, consider further education:
+	https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/
 
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
