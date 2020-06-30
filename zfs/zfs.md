@@ -377,6 +377,7 @@
 A zfs filesystem is also called a dataset (especially in the zfs man page).
 
 Show the mountpoint for the root zfs filesystem in a pool that is imported and root filesystem mounted:
+
 	zfs list | grep fs_name
 	zfs get mountpoint fs_name
 	zfs get -H mountpoint fs_name
@@ -384,6 +385,7 @@ Show the mountpoint for the root zfs filesystem in a pool that is imported and r
 	zfs get -Hrt filesystem mountpoint fs_name
 
 Change the default mountpoint for a zpool's root filesystem:
+
 	zfs set mountpoint=/new/mount/point fs_name
 	zfs set mountpoint=/new/mount/point zpool_name
 
@@ -391,9 +393,11 @@ Note that `fs_name` is the same as `zpool_name`, for the root dataset/ root file
 zfs zpool.
 
 Or same, for a sub filesystem/ volume:
+
 	zfs set mountpoint=/new/mount/point fs_name/fs2_name
 
 
 Copy/duplicate a zfs volume/filesystem, from one pool to another, and monitor the transfer (assumes ~85G to be transferred, modify to suit of course):
+
 	zfs send zpih2t/z/vms | pv -petars 85G | zfs receive zpis1t/z/vms
 
