@@ -104,6 +104,12 @@
 ------------------------------------------------------------------
 ## ZFS Backups - send/recv
 
+This tutorial is for the ZFS newbie/beginner, with a focus on using external USB drive(s) to
+backup your ZFS zpool / filesystems.
+
+ZFS makes backups so simple, it becomes a joy to do a even a daily backup, and it's also really
+easy to add extra drives (see below).
+
 --------------
 ### Step 0 - Create at least 1 snapshot of source pool/filesystem to backup
 
@@ -267,10 +273,10 @@
 	# Check the scrub status as it runs:
 	zpool status $BAK_POOL
 
-	# If a drive has problems, consider further education:
-	https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/
-
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
+
+If a drive has problems, consider further education:
+https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/
 
 
 --------------
