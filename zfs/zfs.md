@@ -96,15 +96,19 @@ Summary:   zpool  zfs
 	# --------------
 	# Step 0 - First create at least 1 snapshot of the source filesystem you want to backup.
 
-	# Locate the source pool you are going to backup to the target drive:
-	SRC_POOL=pool1
+	# Locate the source pool/filesystem you are going to backup to the target drive:
+	zpool list
+	zfs list
+	SRC_POOL="pool1.."
 
-	# Locate/name the source snapshot you will use to make a backup (ISO date format works really well):
+	# Locate/name the source snapshot you will use to make a backup (ISO date format works
+	# really well):
 	SRC_SNAP=20200628
 
 	SNAPSHOT=$SRC_POOL@$SRC_SNAP
 
-	# If you have not done so already, make a recursive snapshot of your pool and all its sub filesystems:
+	# If you have not done so already, make a recursive snapshot of your pool and all its sub
+	# filesystems:
 	zfs snapshot -r $SNAPSHOT
 
 	# Have a look see:
@@ -114,30 +118,46 @@ Summary:   zpool  zfs
 	# --------------
 	# Step 1 - Init new (e.g. USB) 'backups' disk/drive.
 
+	# NOTE: some newer (as at 2020) SSDs need ashift=13 (8k sector/block size)!
+
 	# Connect USB drive and create a "backup" pool containing this drive (single-drive zfs zpool):
-	ZP_BAK=zb2t01          # backup drive's  a) pool name,  b) pool's root fs name, and  c) pool/root-fs mountpoint basename
-	DMNT=/media/zen/pool   # tmp/bak pool's parent mount dir
+
+	# Choose a name - this is the backup pool's/drive's  a) pool name,  b) pool's root
+	# filesystem name, and  c) pool/root-fs mountpoint basename :
+	BAK_POOL=zb2t01
+
+	# The tmp/bak pool's parent mount dir:
+	DMNT=/media/zen/pool
 	mkdir $DMNT
-	BAK_DEV=/dev/disk/by-id/ata-TOSHIBA_MQ040000001   # ALWAYS use by-id or by-uuid - NEVER use /dev/sd[bcdX] !!
 
-	zpool create -o ashift=12 -O relatime=on -O compression=on -O canmount=noauto -m $DMNT/$ZP_BAK $ZP_BAK $BAK_DEV
+	# ALWAYS use by-id or by-uuid - NEVER use /dev/sd[bcdX] !! :
+	BAK_DEV=/dev/disk/by-id/ata-TOSHIBA_MQ040000001
 
-	# Create bak drive (sub) filesystem "bu" to contain backups, and create a sub-sub filesystem to contain the source pool's backups:
-	zfs create $ZP_BAK/bu
-	BAK_DEST=$ZP_BAK/bu/$SRC_POOL
+	# (On newer SSD drives, ashift may be 13, not 12, and is probably auto-detected - if so,
+	# change or remove that option accordingly.)
+	zpool create -o ashift=12 -O relatime=on -O compression=on -O canmount=noauto -m $DMNT/$BAK_POOL $BAK_POOL $BAK_DEV
+	zpool list
+
+	# Create bak drive (sub) filesystem "bu" to contain backups, and create a sub-sub filesystem
+	# to contain/locate the source pool's backups:
+	zfs create $BAK_POOL/bu
+	BAK_DEST=$BAK_POOL/bu/$SRC_POOL
 	zfs create $BAK_DEST
+	zfs list $BAK_POOL
 
 
 	# --------------
 	# Step 2 - Create initial "full" source pool backup.
 
-	# Step 2.b - On any -new- target backup device, create a "full" (i.e. non-incremental!) zfs filesystem stream, e.g.:
+	# Step 2.c - On any -new- target backup device, we usually first create a "full" (i.e.
+	# non-incremental!) zfs filesystem stream, e.g.:
 	zfs send -cvR $SNAPSHOT | zfs receive -vudF -o canmount=noauto $BAK_DEST
 
 	# Step 2.a - alternatively, install `pv`, and then do a zfs dry run as follows:
 	zfs send -ncvR $SNAPSHOT
 
-	# and in the output, look for the line "total estimated size is 194G" (your total should be different), and set estimated size:
+	# and in the output, look for the line "total estimated size is 194G" (your total should be
+	# different), and set estimated size:
 	SIZE=194G   # NOTE: `pv` does NOT accept decimal place - so just round up or down
 
 	# then run your initial "full" backup as follows:
@@ -146,28 +166,35 @@ Summary:   zpool  zfs
 
 	# --------------
 	# Step 3 - Backup is finished, so now export the backup pool (this is similar to umount):
-	zpool export $ZP_BAK
+	zpool export $BAK_POOL
 
-	# and spin down the disk drive (if it's a magnetic rust bucket HDD):
-	hdparm -y $BAK_DEV
+	# and spin down the disk drive(s) to be unplugged (if it's a magnetic rust bucket HDD):
+	hdparm -y $BAK_DEV   [ $BAK_DEV2 ... ]
 
-	# and finally wait about 6 seconds for the HDD to stop spinning, then you may safely unplug your zpool backup drive and store in a cool, dry, dust-free location.
+	# and finally wait about 6 seconds for the HDD(s) to stop spinning, then you may safely
+	# unplug your zpool backup drive(s) and store in a clean, cool, dry, dust-free location.
 
 
 	# --------------
 	# Step 4 - Do a subsequent "incremental" zfs zpool backup (assumes prior "full" backup).
 
-	# Some time goes by, perhaps a day, and now we want to do just an incremental backup of the delta since yesterday;
+	# Some time goes by, perhaps a day, and now we want to do just an incremental backup of the
+	# delta since yesterday;
 
 	# So we make a new recursive snapshot:
 	SRC_SNAP2=20200629
 	SNAPSHOT2=$SRC_POOL@$SRC_SNAP2
 	zfs snapshot -r $SNAPSHOT2
 
-	# Connect your USB backups drive, wait a few seconds, then ask zfs to tell us if there is a valid pool which could be imported:
+	# Connect your USB backup drive(s), wait a few seconds, then ask zfs to tell us if there is
+	# a valid pool which could be imported:
+	zpool list
 	zpool import
-	# if your backup pool is not shown, something went wrong; if it is shown, import it without mounting:
-	zpool import -N $SRC_POOL
+
+	# if your backup pool is not shown, something went wrong; if it is shown, import it without
+	# mounting:
+	zpool import -N $BAK_POOL
+	zpool list
 
 	# This time we make an incremental ("-I" option) backup:
 	# dry run again:
@@ -178,6 +205,83 @@ Summary:   zpool  zfs
 
 	# and this time we do the actual, but incremental, backup:
 	zfs send -cvRI $SNAPSHOT $SNAPSHOT2 | pv -petars $SIZE | zfs recv -vudF -o canmount=noauto $BAK_DEST
+
+	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
+
+
+	# --------------
+	# Step 5 - Easily create a full additional backup drive.
+
+	# Some time goes by, perhaps a week, and a second separate full backup drive is wanted.
+
+	# Connect a new blank USB drive (wiped/no partition table) and identify it:
+	BAK_DEV2=/dev/disk/by-id/ata-TOSHIBA_MQ040000378   # ALWAYS use by-id or by-uuid - NEVER use /dev/sd[bcdX] !!
+
+	# Now plug in first/original USB backup drive, wait a few seconds and import the backup
+	# pool:
+	zpool import -N $BAK_POOL
+	zpool list
+
+	# Then 'attach' the new drive to the old drive as a RAID mirror (use the `-f` option if new
+	# drive BAK_DEV2 is not empty and you're really really sure):
+	zpool attach [-f] -o ashift=12 $BAK_POOL $BAK_DEV $BAK_DEV2
+
+	# If all went well, BAK_DEV and BAK_DEV2 are now a RAID mirror!  And on top, zfs is now busy
+	# syncing your two drives.  Since they're both through USB, if you have a normally large
+	# amount of data in your zpool, it can take a long time to sync the two drives (for zfs to
+	# do it's automatic "resilver"), so get status updates as follows:
+	zpool status $BAK_POOL
+
+	# At the same time this sync is happening, you can do another backup send/recv while
+	# waiting, zfs is notoriously "available", but if feeling cautious, you can wait first.
+
+	# When zfs finishes synchronizing, and you've added your daily backup, time to unplug
+	# your backup drives again:
+
+	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
+
+
+	# --------------
+	# Step 6 - Do a full scan (check for errors) of your backup drive(s)/ bak pool:
+
+	# First attach one or more of your backup drives, wait for them to spin up, then import:
+	zpool import -N $BAK_POOL
+
+	# Now we can scan, and if a mirror drive is attached, bad sectors are automatically fixed!:
+	zpool scrub $BAK_POOL
+
+	# Check the scrub status as it runs:
+	zpool status $BAK_POOL
+
+	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
+
+
+	# --------------
+	# Step 7 - Easily create a replacement backup drive to replace a bad backup drive.
+
+	# If one of your two backup (mirror) drives is lost or damaged, plug in the still good
+	# drive, then plug in a new ("third") backup drive to replace the bad/dead drive, and then
+	# run the following (change BAK_DEV to BAK_DEV2 as needed):
+	zpool import -N $BAK_POOL
+	zpool replace [-f] -o ashift=12 $BAK_POOL $BAK_DEV $BAK_DEV3
+
+	# Alternatively, if the "bad" backup drive just has some bad sectors, zfs can use it if
+	# needed to resilver your new/third backup drive, so plug in all 3 drives and do something
+	# like this:
+	zpool import -N $BAK_POOL
+	zpool attach [-f] -o ashift=12 $BAK_POOL $BAK_DEV $BAK_DEV3
+
+	# which would result in a 3 way mirror of BAK_DEV, BAK_DEV2 and BAK_DEV3.
+
+	# Once zfs has finished resilvering the new/third backup drive, you can `zfs remove` the
+	# dodgy backup drive from your backup pool, something like this:
+	zpool remove $BAK_POOL $BAK_DEV2
+
+	# Once all done, export, spin down, and unplug.
+
+	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
+
+
 
 	# ==================================================================
 
