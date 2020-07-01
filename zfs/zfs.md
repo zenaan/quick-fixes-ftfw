@@ -1,6 +1,37 @@
 
 # ZFS Cheatsheet + Backups tutorial
 
+Contents:
+
+ - [Toplist](#user-content-toplist)
+
+ - [Cmd summary](#user-content-cmd-summary)
+
+ - [Tutorial 0: Create a ZFS data partition](#user-content-tutorial-0-create-a-zfs-data-partition)
+
+   - [Step 0 - Locate your data partition or disk drive](#user-content-step-0---locate-your-data-partition-or-disk-drive)
+   - [Step 1 - Create your data pool](#user-content-step-1---create-your-data-pool)
+   - [Step 2 - Create zfs filesystems](#user-content-step-2---create-zfs-filesystems)
+   - [Step 3 - Create a point in time `zfs snapshot`](#user-content-step-3---create-a-point-in-time-zfs-snapshot)
+
+ - [Tutorial 1: ZFS Backups - send/recv](#user-content-tutorial-1-zfs-backups---sendrecv)
+
+   - [Step 0 - Create at least 1 snapshot of source pool/filesystem to backup](#user-content-step-0---create-at-least-1-snapshot-of-source-poolfilesystem-to-backup)
+   - [Step 1 - Init new (e.g. USB) 'backups' disk/drive](#user-content-step-1---init-new-eg-usb-backups-diskdrive)
+   - [Step 2 - Create initial "full" source pool backup](#user-content-step-2---create-initial-full-source-pool-backup)
+   - [Step 3 - Export and unplug backup drive(s)](#user-content-step-3---export-and-unplug-backup-drives)
+   - [Step 4 - Do subsequent "incremental" zfs zpool backup](#user-content-step-4---do-subsequent-incremental-zfs-zpool-backup-assumes-prior-full-backup)
+   - [Step 5 - Easily create a full additional backup drive](#user-content-step-5---easily-create-a-full-additional-backup-drive)
+   - [Step 6 - Do a full scan (check for errors) of your backup drive(s)](#user-content-step-6---do-a-full-scan-check-for-errors-of-your-backup-drives-bak-pool)
+   - [Step 7 - Easily replace a bad/failing backup drive](#user-content-step-7---easily-replace-a-badfailing-backup-drive)
+
+ - [Tutorial 2: Free up disk space, "remove" low prio data pool filesystem](#user-content-tutorial-2-free-up-disk-space-remove-low-prio-data-pool-filesystem)
+
+   - [Step 0 - Import backup pool, using alternate root](#user-content-step-0---import-backup-pool-using-alternate-root)
+   - [Step 1 - Clone the low priority filesystem](#user-content-step-1---clone-the-low-priority-filesystem)
+   - [Step 2 - Delete low prio filesystem from primary pool](#user-content-step-2---delete-low-prio-filesystem-from-primary-pool)
+
+
 ------------------------------------------------------------------
 ## Toplist
 
@@ -102,24 +133,140 @@
 
 
 ------------------------------------------------------------------
-## ZFS Backups - send/recv
+-------------
+## Tutorial 0: Create a ZFS data partition
+
+ZFS provides "git like" snapshots (basically instantaneous) and clones (COW writable snapshots),
+with all data checksummed on disk, and simple administration commands - ZFS makes the difficult,
+really easy.
+
+This tutorial is for the ZFS newbie/beginner, where you might begin using ZFS on a laptop or
+workstation "data" partition or whole disk drive.
+
+It is assumed that you have a laptop or workstation with a ZFS data partition, or a full "data"
+drive, which you will format as a ZFS zpool (wiping any data already on it).
+
+Usually, for admin or "root" commands you will need to either prepend each command with `sudo`
+if you have sudo configured, or simply change to the `root` user first, which can be easier when
+you need to run a number of admin commands in sequence, such as when working with ZFS - for
+example, in your terminal or command shell, do one of the following:
+
+	# If you have a root password configured, run:
+	su -
+
+	# Or if you have `sudo` configured, run:
+	sudo su -
+
+
+-------------
+### Step 0 - Locate your data partition or disk drive
+
+	# Locate the source device (partition or drive) which is to be formatted with a ZFS zpool;
+	# if unsure, get assistance! :
+	mount
+	ls -l /dev/disk/by-id/
+	df -h
+
+	SRC_DEV=/dev/disk/by-id/wwn-0x500200001001-part4   # set this accordingly !
+
+	# Name your ZFS data pool (intentionally long and ugly poolname to encourage thought and a
+	# better choice of pool name):
+	SRC_POOL="zfs_internal_data_pool_1"
+
+
+-------------
+### Step 1 - Create your data pool
+
+	# Check out the ley of the land:
+	zpool list
+	zfs list
+
+	# NOTE: some newer (as at 2020) SSDs need ashift=13 (8k sector/block size)!
+
+	# Create your zpool:
+	zpool create -o ashift=12 -O relatime=on -O compression=on $SRC_POOL $SRC_DEV
+
+	# Alternatively, create a mirrored RAID array using two drives, or possibly same-sized
+	# partitions but on two separate drives:
+	zpool create -o ashift=12 -O relatime=on -O compression=on $SRC_POOL $SRC_DEV1 $SRC_DEV2
+
+	# View some info about your zpool:
+	zpool list -v
+
+
+-------------
+### Step 2 - Create zfs filesystems
+
+A ZFS _filesystem_, also called a ZFS _dataset_, looks like a directory, but can be handled as a
+self-contained unit, for example when making snapshots, clones from snapshots, or backups.
+
+	# Create a parent filesystem for primary user, to contain your ZFS data filesystems:
+	PRIMARY_USER=`id -un 1000`
+	USER_BASE=$SRC_POOL/$PRIMARY_USER
+	zfs create $USER_BASE
+
+	# Create some zfs filesystems in your logical file groupings, e.g.:
+	zfs create $USER_BASE/home
+	zfs create $USER_BASE/home/Desktop
+	zfs create $USER_BASE/work
+	zfs create $USER_BASE/dev
+	zfs create $SRC_POOL/setups
+	zfs create -o compression=off $SRC_POOL/youtube
+
+	zfs list
+
+Your new data pool is good to go.
+
+
+-------------
+### Step 3 - Create a point in time `zfs snapshot`
+
+	# First choose a snapshot name; when sorting and scripting (automating) regular tasks, ISO
+	# date format works well, e.g. "20201227" or "2020-12-27".
+	SNAP=20200627
+
+	# Or choose a more descriptive name (spaces not allowed):
+	SNAP=20200627-EOFY_charts
+
+	# Create a recursive snapshot of all your zfs filesystems on your "data" pool:
+	zfs snapshot -r $SRC_POOL@$SNAP
+
+	zfs list -tr snap
+
+	# If you have just finished (or are about to start) some work, you might just create a
+	# snapshot of your work filesystem (the `-r` option is only needed if your work zfs
+	# filesystem has sub-filesystems):
+	zfs snapshot -r $USER_BASE/work@$SNAP
+
+For more prime reading on ZFS snapshots and clones, see [ZFS Administration, Part XII- Snapshots
+and Clones](https://pthree.org/2012/12/19/zfs-administration-part-xii-snapshots-and-clones/).
+
+
+
+------------------------------------------------------------------
+-------------
+## Tutorial 1: ZFS Backups - send/recv
+
+ZFS makes backups so simple, it becomes a joy to do even a daily backup, and it's also really
+easy to add an extra drive (see below) and more.
 
 This tutorial is for the ZFS newbie/beginner, with a focus on using external USB drive(s) to
 backup your ZFS zpool / filesystems.
 
-ZFS makes backups so simple, it becomes a joy to do a even a daily backup, and it's also really
-easy to add extra drives (see below).
+It is assumed that you have a laptop or workstation with a ZFS data partition already created
+and being used, and that you wish to attach an external USB drive (or two) and make a backup of
+your ("internal") ZFS "data" drive or partition, which is called a zpool.
 
---------------
+
+-------------
 ### Step 0 - Create at least 1 snapshot of source pool/filesystem to backup
 
 	# Locate the source pool/filesystem you are going to backup to the target drive:
 	zpool list
 	zfs list
-	SRC_POOL="pool1.."
+	SRC_POOL="pool_1.."
 
-	# Locate/name the source snapshot you will use to make a backup (ISO date format works
-	# really well):
+	# Locate/name the source snapshot you will use to make a backup:
 	SRC_SNAP=20200628
 
 	SNAPSHOT=$SRC_POOL@$SRC_SNAP
@@ -132,7 +279,7 @@ easy to add extra drives (see below).
 	zfs list -rt snap,filesystem $SRC_POOL
 
 
---------------
+-------------
 ### Step 1 - Init new (e.g. USB) 'backups' disk/drive
 
 	# NOTE: some newer (as at 2020) SSDs need ashift=13 (8k sector/block size)!
@@ -141,10 +288,11 @@ easy to add extra drives (see below).
 
 	# Choose a name - this is the backup pool's/drive's  a) pool name,  b) pool's root
 	# filesystem name, and  c) pool/root-fs mountpoint basename :
-	BAK_POOL=zb2t01
+	BAK_POOL=bak_pool
 
 	# The tmp/bak pool's parent mount dir:
-	DMNT=/media/zen/pool
+	PRIMARY_USER=`id -un 1000`
+	DMNT=/media/$PRIMARY_USER/pools
 	mkdir $DMNT
 
 	# ALWAYS use by-id or by-uuid - NEVER use /dev/sd[bcdX] !! :
@@ -163,7 +311,7 @@ easy to add extra drives (see below).
 	zfs list $BAK_POOL
 
 
---------------
+-------------
 ### Step 2 - Create initial "full" source pool backup
 
 	# Step 2.c - On any -new- target backup device, we usually first create a "full" (i.e.
@@ -181,7 +329,7 @@ easy to add extra drives (see below).
 	zfs send -cvR $SNAPSHOT | pv -petars $SIZE | zfs recv -vudF -o canmount=noauto $BAK_DEST
 
 
---------------
+-------------
 ### Step 3 - Export and unplug backup drive(s)
 
 	# Backup is finished, so now export the backup pool (this is similar to umount)
@@ -195,7 +343,7 @@ easy to add extra drives (see below).
 	# unplug your zpool backup drive(s) and store in a clean, cool, dry, dust-free location.
 
 
---------------
+-------------
 ### Step 4 - Do subsequent "incremental" zfs zpool backup (assumes prior "full" backup)
 
 	# Some time goes by, perhaps a day, and now we want to do just an incremental backup of the
@@ -228,8 +376,11 @@ easy to add extra drives (see below).
 
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
+For more material on ZFS send and receive, see [ZFS Administration, Part XIII- Sending and
+Receiving Filesystems](https://pthree.org/2012/12/20/zfs-administration-part-xiii-sending-and-receiving-filesystems/).
 
---------------
+
+-------------
 ### Step 5 - Easily create a full additional backup drive
 
 	# Some time goes by, perhaps a week, and a second separate full backup drive is wanted.
@@ -240,28 +391,39 @@ easy to add extra drives (see below).
 	# Now plug in first/original USB backup drive, wait a few seconds and import the backup
 	# pool:
 	zpool import -N $BAK_POOL
-	zpool list
+
+	# Identify original backup disk device:
+	zpool list -v
+	# e.g.  BAK_DEV=ata-TOSHIBA_MQ040000001
 
 	# Then 'attach' the new drive to the old drive as a RAID mirror (use the `-f` option if new
 	# drive BAK_DEV2 is not empty and you're really really sure):
 	zpool attach [-f] -o ashift=12 $BAK_POOL $BAK_DEV $BAK_DEV2
 
 	# If all went well, BAK_DEV and BAK_DEV2 are now a RAID mirror!  And on top, zfs is now busy
-	# syncing your two drives.  Since they're both through USB, if you have a normally large
-	# amount of data in your zpool, it can take a long time to sync the two drives (for zfs to
-	# do it's automatic "resilver"), so get status updates as follows:
+	# syncing your two drives.
+	#
+	# If both drives are through USB, and if you have a normally large amount of data in your
+	# zpool, it can take a long time to sync the two drives (for zfs to do it's automatic
+	# "resilver"), so get status updates as follows:
 	zpool status $BAK_POOL
+
+	# Add an interval to automatically print a status update every 60 seconds:
+	zpool status $BAK_POOL 60
 
 	# At the same time this sync is happening, you can do another backup send/recv while
 	# waiting, zfs is notoriously "available", but if feeling cautious, you can wait first.
 
-	# When zfs finishes synchronizing, and you've added your daily backup, time to unplug
-	# your backup drives again:
+	# When zfs finishes resilvering (synchronizing the new mirror drive), and you've added your
+	# daily backup, time to unplug your backup drives again:
 
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
+ProTip: Use disks of different brands or at least different batches to possibly reduce the
+likelihood that both backup drives fail around the same time.
 
---------------
+
+-------------
 ### Step 6 - Do a full scan (check for errors) of your backup drive(s)/ bak pool
 
 	# First attach one or more of your backup drives, wait for them to spin up, then import:
@@ -275,11 +437,11 @@ easy to add extra drives (see below).
 
 	# WARNING: Always `zpool export ...` your pool before detaching USB drives!  See "Step 3" above.
 
-If a drive has problems, consider further education:
-https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/
+If a drive has problems, consider further self education [ZFS Administration, Part VI- Scrub and
+Resilver](https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/).
 
 
---------------
+-------------
 ### Step 7 - Easily replace a bad/failing backup drive
 
 	# If one of your two backup (mirror) drives is lost or damaged, plug in the still good
@@ -307,6 +469,122 @@ https://pthree.org/2012/12/11/zfs-administration-part-vi-scrub-and-resilver/
 
 
 ------------------------------------------------------------------
+-------------
+## Tutorial 2: Free up disk space, "remove" low prio data pool filesystem
+
+__Scenario__: Your (usually "internal") zfs primary data pool is rapidly filling up, and so you
+must free up some disk space.
+
+With ZFS this is easy to do, e.g. in this tutorial by cloning a low priority filesystem snapshot
+such as `data/youtubes` from a backup drive to, on the same backup drive, a _zfs clone_ - in this
+way we still keep the videos, just not on our "running out of space" primary drive.
+
+This tutorial assumes:
+
+ - familiarity with earlier tutorials
+ - that you have an existing internal "primary data pool" which is filling up
+ - that you have a backup of this internal data pool on some external, presumably larger, disk
+
+
+-------------
+### Step 0 - Import backup pool, using alternate root
+
+Firstly you must make sure that your backup of your low priority filesystem is up to date!  If
+the backup of your "low prio" filesystem is not up to date, you will lose data (whatever has not
+yet been backed up).
+
+See above tutorials, in particular _Tutorial 1, Step 4_,
+[Do subsequent "incremental" zfs zpool backup](#user-content-step-4---do-subsequent-incremental-zfs-zpool-backup-assumes-prior-full-backup).
+
+	# Identify your primary (source) data pool which is getting full:
+	zfs list
+	SRC_POOL="pool_1.."
+
+	# Plug in (at least one of) your backup drive(s), investigate and identify your backup pool:
+	zpool list
+	zpool import
+	BAK_POOL=bak_pool   # use the name of your backup pool
+
+	# Import your backup pool, setting an alternate root (mountpoint) so we can do the clone:
+	PRIMARY_USER=`id -un 1000`
+	DMNT=/media/$PRIMARY_USER/pools
+	ALTROOT=$DMNT/$BAK_POOL/bu
+	zpool import -R $ALTROOT $BAK_POOL
+
+Because we have set an alternate root when importing the backup pool, we can more simply mount
+the backup filesystem(s) to work on it/them, and because the mountpoint of the imported
+filesystem(s) does not overlap with the internal/primary pool(s), we can readily list snapshots
+and make clones of snapshots.
+
+
+-------------
+### Step 1 - Clone the low priority filesystem
+
+	# Identify your low priority filesystem to later "prune" from your primary data pool:
+	zfs list | egrep $BAK_POOL
+	LOW_PRIO_NAME=youtube_      # choose correct name here!
+	LOW_PRIO_FS=$BAK_POOL/bu/$SRC_POOL/$LOW_PRIO_NAME
+
+	# Check that you've got the correct backup pool filesystem name:
+	zfs list $LOW_PRIO_FS
+
+	# Make a filesystem to group (low prio) clones in this pool - this is also needed to keep the
+	# clones out of the way of our normal backups which normally clobber all changes (to ensure a
+	# full and clean backup):
+	CLONES=$BAK_POOL/bu/clones
+	zfs create $CLONES
+
+	# Identify the snapshot name used for your final backup of your low prio filesystem:
+	zfs list -t snap $LOW_PRIO_FS
+	LOW_PRIO_SNAP="20200629-22.00"   # choose most recent snap
+
+	# (If your low-prio filesystem is a sub-filesystem, i.e. if it contains one or more dir
+	# separators, you might change the slashes to hyphens to create your clone fs name.
+	# Alternatively you might re-create your zfs filesystem hierarchy under the `bu/clones/`
+	# filesystem.)
+
+	LOW_PRIO_FS_SNAP=$LOW_PRIO_FS@$LOW_PRIO_SNAP
+	# e.g. "bak_pool/bu/pool_1/youtube@20200629-22.00"
+
+	LOW_PRIO_FS_CLONE=$CLONES/$SRC_POOL-$LOW_PRIO_NAME-$LOW_PRIO_SNAP
+	# e.g. "bak_pool/bu/clones/pool_1-youtube-20200629-22.00"
+
+	# If you have no snapshot of $LOW_PRIO_FS on your backup pool, or no recent snapshot, or
+	# you're unsure in some way about what the most recent snapshot is, now is your last chance
+	# to make sure - investigate and if needed, go do that final backup.
+
+	# Finally, do the clone, which will "lock" the snapshot and make a filesystem of it:
+	zfs clone $LOW_PRIO_FS_SNAP $LOW_PRIO_FS_CLONE
+
+If this worked you should now be able to `cd` into your backup pool's `clones` directory and view
+the files in your low priority filesystem.  If this is not the case, fix it up now before
+proceeding.
+
+If you decide you want to change the name __or location__ of your clone, or of a filesystem, then
+use the `zfs rename` command.
+
+
+-------------
+### Step 2 - Delete low prio filesystem from primary pool
+
+Assuming you now have a clone of your low priority filesystem on your backup disk/pool, you can
+safely proceed to free up your primary pool as follows.
+
+	# Use `zfs destroy` to remove the low priority filesystem from your primary drive.
+
+	# First get a list of the snapshots that must first be deleted:
+	zfs destroy $SRC_POOL/$LOW_PRIO_NAME
+
+	# Then one by one, destroy each snapshot, again using the `zfs destroy` command ...
+
+	# Finally, again run the command to destroy the low prio filesystem and this time it should
+	# succeed:
+	zfs destroy $SRC_POOL/$LOW_PRIO_NAME
+
+
+
+------------------------------------------------------------------
+-------------
 ## Moar commands
 
 	# Example: backup source "zpis1t/..." pool (and all sub fs/vols/snaps, up to snapshot "20190920-13.32"), creating/copying source into target pool/fs "bak1t/backups/zpis1t/...":
