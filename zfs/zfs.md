@@ -332,8 +332,7 @@ your ("internal") ZFS "data" drive or partition, which is called a zpool.
 -------------
 ### Step 3 - Export and unplug backup drive(s)
 
-	# Backup is finished, so now export the backup pool (this is similar to umount)
-
+	# Backup is finished, so now export the backup pool (this is similar to umount):
 	zpool export $BAK_POOL
 
 	# and spin down the disk drive(s) to be unplugged (if it's a magnetic rust bucket HDD):
@@ -421,6 +420,28 @@ Receiving Filesystems](https://pthree.org/2012/12/20/zfs-administration-part-xii
 
 ProTip: Use disks of different brands or at least different batches to possibly reduce the
 likelihood that both backup drives fail around the same time.
+
+
+-------------
+### Step 5b - clear resilvering errors
+
+With USB interfaces and depending on the chips and drivers involved, sometimes due to these USB
+interface limitations, chips, integer wraparounds, a drive "falls over".
+
+ZFS detects this but once a drive starts producing "too many" errors, ZFS will stop resilvering,
+and gives a helpful message "One or more devices are faulted in response to persistent errors.
+... Replace the faulted device, or use 'zpool clear' to mark the device repaired."
+
+	# Try taking the device offline:
+	zpool offline bak_pool $BAK_DEV2
+
+	# Now unplug the USB drive, AND the controller/cable, and plug it back in.
+	# The zpool status errer still appears, so clear it:
+	zpool clear bak_pool $BAK_DEV2
+
+	# Take 2: running zpool's suggested "clear" command, completely restarts the resilvering; in
+	# the test used for writing this, zfs must sync about 675 Gib, across USB2, taking roughly 7
+	# hours.
 
 
 -------------
