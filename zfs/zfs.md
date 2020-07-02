@@ -22,6 +22,7 @@ Contents:
    - [Step 3 - Export and unplug backup drive(s)](#user-content-step-3---export-and-unplug-backup-drives)
    - [Step 4 - Do subsequent "incremental" zfs zpool backup](#user-content-step-4---do-subsequent-incremental-zfs-zpool-backup-assumes-prior-full-backup)
    - [Step 5 - Easily create a full additional backup drive](#user-content-step-5---easily-create-a-full-additional-backup-drive)
+     - [Step 5b - clear resilvering errors](#user-content-step-5b---clear-resilvering-errors)
    - [Step 6 - Do a full scan (check for errors) of your backup drive(s)](#user-content-step-6---do-a-full-scan-check-for-errors-of-your-backup-drives-bak-pool)
    - [Step 7 - Easily replace a bad/failing backup drive](#user-content-step-7---easily-replace-a-badfailing-backup-drive)
 
@@ -442,6 +443,8 @@ and gives a helpful message "One or more devices are faulted in response to pers
 	# Take 2: running zpool's suggested "clear" command, completely restarts the resilvering; in
 	# the test used for writing this, zfs must sync about 675 Gib, across USB2, taking roughly 7
 	# hours.
+
+	# Update to come ...
 
 
 -------------
