@@ -446,6 +446,8 @@ Your first drive should be fine though.
 	# in the real life (and needed) test used for writing this, zfs must sync about 675 Gib,
 	# across USB2, taking roughly 7 hours.
 
+	# Once done, export the pool, spin down the drives and unplug them.
+
 So far, the author's ZFS resilver across a USB interface has not succeeded.
 
 Assuming the same failure repeats (it did), it may be time to buy a better USB SATA controller
