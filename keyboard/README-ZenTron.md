@@ -10,6 +10,8 @@ screenshots below](#user-content-screenshots-and-links)):
 
 https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/0
 
+(On the Oryx page, click on "Play Layout Tour" near the bottom left for a HTML linked tour.)
+
 ZenTron is intended to be _Cyrillic ready_ with a full __9__ yet to be assigned keys - if you
 speak Russian, please send your suggestions for a "Cyrillic LFO" ergonomic layer mapping to the
 ZenTron ergo layout, and the author shall whip up a custom XOrg Cyrillic keyboard layout for
