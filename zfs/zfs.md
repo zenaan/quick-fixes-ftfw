@@ -405,7 +405,7 @@ Receiving Filesystems](https://pthree.org/2012/12/20/zfs-administration-part-xii
 	#
 	# If both drives are through USB, and if you have a normally large amount of data in your
 	# zpool, it can take a long time to sync the two drives (for zfs to do it's automatic
-	# "resilver"), so get status updates as follows:
+	# "resilver" drive sync), so get status updates as follows:
 	zpool status $BAK_POOL
 
 	# Add an interval to automatically print a status update every 60 seconds:
@@ -427,24 +427,28 @@ likelihood that both backup drives fail around the same time.
 ### Step 5b - clear resilvering errors
 
 With USB interfaces and depending on the chips and drivers involved, sometimes due to these USB
-interface limitations, chips, integer wraparounds, a drive "falls over".
+interface limitations, integer wraparounds or who knows, a drive "falls over".
 
-ZFS detects this but once a drive starts producing "too many" errors, ZFS will stop resilvering,
+ZFS detects this but if ZFS has "too many" errors on a drive, it won't use that drive,
 and gives a helpful message "One or more devices are faulted in response to persistent errors.
 ... Replace the faulted device, or use 'zpool clear' to mark the device repaired."
+
+Your first drive should be fine though.
 
 	# Try taking the device offline:
 	zpool offline bak_pool $BAK_DEV2
 
 	# Now unplug the USB drive, AND the controller/cable, and plug it back in.
-	# The zpool status errer still appears, so clear it:
+	# The zpool status error still appears, so clear it:
 	zpool clear bak_pool $BAK_DEV2
 
 	# Take 2: running zpool's suggested "clear" command, completely restarts the resilvering; in
 	# the test used for writing this, zfs must sync about 675 Gib, across USB2, taking roughly 7
 	# hours.
 
-	# Update to come ...
+Assuming the same failure repeats, it may be time to buy a better USB SATA controller
+(adaptor), and/or check the progress of the ZFS bug report about this here:
+[With new scan code, interrupted ZFS Resilvers start over from zero #9646](https://github.com/openzfs/zfs/issues/9646)
 
 
 -------------
