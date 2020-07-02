@@ -20,5 +20,5 @@ others may find one or two useful - so thank the anonymous guy.
 
  - [Vim quick fixes](vim/README.md)
 
- - [ZenTron w/ LFO - fastest keyboard layout in the world](keyboard/Zentron-LFO.md)
+ - [ZenTron w/ LFO - fastest keyboard layout in the world](keyboard/README-ZenTron.md)
 
