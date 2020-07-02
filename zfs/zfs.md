@@ -442,12 +442,14 @@ Your first drive should be fine though.
 	# The zpool status error still appears, so clear it:
 	zpool clear bak_pool $BAK_DEV2
 
-	# Take 2: running zpool's suggested "clear" command, completely restarts the resilvering; in
-	# the test used for writing this, zfs must sync about 675 Gib, across USB2, taking roughly 7
-	# hours.
+	# Take 2: running zpool's suggested "clear" command, completely restarts the resilvering;
+	# in the real life (and needed) test used for writing this, zfs must sync about 675 Gib,
+	# across USB2, taking roughly 7 hours.
 
-Assuming the same failure repeats, it may be time to buy a better USB SATA controller
-(adaptor), and/or check the progress of the ZFS bug report about this here:
+So far, the author's ZFS resilver across a USB interface has not succeeded.
+
+Assuming the same failure repeats (it did), it may be time to buy a better USB SATA controller
+(adaptor), and/or to check the progress of the ZFS bug report about this here:
 [With new scan code, interrupted ZFS Resilvers start over from zero #9646](https://github.com/openzfs/zfs/issues/9646)
 
 
