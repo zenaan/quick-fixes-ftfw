@@ -289,7 +289,7 @@ There are many ergonomic keyboard character layouts which (at least attempt to) 
 Qwerty, or to improve on other ergonomic layouts since Qwerty.
 
 The author resolved to learn an ergonomic layout earlier this year (2020) when he was fortunate
-enough to be provided an ErgoDox-EZ shine.  Having used a TrulyErgonomic for a few years, which
+enough to be provided an ErgoDox-EZ Glow.  Having used a TrulyErgonomic for a few years, which
 continues to be an excellent ortholinear keyboard, and an MS Natural keyboard for many years
 before that, and a user of Gnu Bash, Tmux, Vim, Mutt and Java without an IDE, the opportunity to
 explore easy keyboard layout tinkering was seized.
