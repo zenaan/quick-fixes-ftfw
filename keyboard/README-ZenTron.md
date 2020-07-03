@@ -1,5 +1,5 @@
 
-# ZenTron keyboard layout - _fastest in the world_
+# ZenTron - _the fastest keyboard layout in the world_
 _An optimal ergonomic keyboard character layout for all keyboards - the fastest keyboard layout
 in the world for touch typists._
 
@@ -10,9 +10,9 @@ screenshots below](#user-content-screenshots-and-links)):
 
 https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/0
 
-(On the Oryx page, click on "Play Layout Tour" near the bottom left for a HTML linked tour.)
+(On that Oryx page, click "Play layout tour" near the bottom left for the HTML/JS linked tour.)
 
-ZenTron is intended to be _Cyrillic ready_ with a full __9__ yet to be assigned keys - if you
+ZenTron is intended to be **_Cyrillic ready_** with a full __9__ yet to be assigned keys - if you
 speak Russian, please send your suggestions for a "Cyrillic LFO" ergonomic layer mapping to the
 ZenTron ergo layout, and the author shall whip up a custom XOrg Cyrillic keyboard layout for
 download.
@@ -37,18 +37,21 @@ __TOC:__
 ----
 ## Overview
 
-ZenTron is an almost inverted _Maltron_ layout, with the little finger columns offset down one
-row, and keyboard layers (thank you QMK keyboard firmware) for numbers, function keys and
-navigation, which is of course merely an example from which you may liberally pirate.
+ZenTron is a mostly inverted _Maltron_ layout, with the little finger columns offset down one
+row, and keyboard layers (thank you [QMK keyboard firmware](https://docs.qmk.fm/#/)) for
+numbers, function keys and navigation, which is of course an example from which you may
+liberally pirate.
 
 This particular combination of keyboard layout and layers, is getting close to the fastest
 achievable keyboard layout for maximising typing speed on any planar (two dimensional, single
-layer, and not curved) keyboard.  The Maltron layout may be able to be improved upon a little,
-but at the least this would have to account for overall key frequencies and not just letters, or
-letters and numbers etc, as well as the Little Finger length discrepancy vis à vis every other
-keyboard layout today (for "July 2020" values of today), _and_ the typing speed gains achieved
-by overloading the home row (and nearby) keys for a numeric keypad for example; properly
-analysing precise relative key positions in relation to finger lengths could also help.
+physical layer, and not curved) keyboard.  The Maltron layout may be able to be improved upon a
+little, but at the least this would have to account for overall key frequencies and not just
+letters, or letters and numbers etc, as well as the Little Finger length discrepancy vis à vis
+every other keyboard layout today (for "July 2020" values of today), _and_ the typing speed
+gains achieved by overloading the home row (and nearby) keys for a numeric keypad for example;
+properly analysing precise relative key positions in relation to finger lengths could also help.
+
+Keep in mind that _typing speed_ is largely synonymous with _ergonomic_ and with _reducing RSI_.
 
 So until tomorrow, this is it :)
 
@@ -57,98 +60,98 @@ So until tomorrow, this is it :)
 ----
 ## Summary
 
- - At heart ZenTron is an inverted _Maltron_ layout - which feels better and faster to type on
-   than plain Maltron.  The exception is that the RHS (right hand side) little finger column is
-   not inverted.
+ - At heart ZenTron is an inverted [_Maltron_](http://xahlee.info/kbd/Maltron_keyboard.html)
+   layout - which feels better and faster to type on than plain Maltron.  The exception is that
+   the RHS (right hand side) little finger column is not inverted.
 
    Xah Lee [highlights conclusively that](http://xahlee.info/kbd/maltron_vs_dvorak_layout.html)
    Maltron is inherently better than all other layouts today (it adds a home row key on the left
    thumb).
 
-   On top of this we add a Little Finger Offset mod (__LFO mod__) where the pinky finger columns
-   are offset downwards by one row, which is faster again, as this actually aligns the pinky
-   fingers with the actual keys they are supposed to press!
+   On top of this we add a Little Finger Offset modification (__LFO mod__) where the pinky
+   finger columns are offset downwards by one row, which is faster again, as this actually
+   aligns the pinky fingers with the actual keys they are supposed to press!
 
-   LFO just by itself is a huge improvement which can be appliead to most other keyboard layouts
+   LFO just by itself is a huge improvement which can be applied to most other keyboard layouts
    depending only on the limitations of your physical keyboard.
 
  - This LFO mod also means that for most typing, you can now rest your wrist, whilst you type,
    for longer periods of time, just watch out for RSI from twisting your wrist and/or little
-   fingers if you do that.
+   fingers if you do that, simply lift your wrist when needed so as to not unnecessarily strain
+   your delicate pinky.
 
  - Punctuation, Tab, Escape and meta keys, are all optimized for programmers and
    command line use - although this can be quite a personal thing so YMMV.
 
- - The numeric keypad is optimized for right-handed users, but the FnKey and Navigation layers
-   are symmetrical, which also provides for alternating which hand is used in order to minimize
-   RSI.
+ - The numeric keypad is right-handed (some needed punctuation is on the LHS) but the FnKey and
+   Navigation layers are symmetrical, which also provides for alternating which hand is used in
+   order to minimize RSI.
 
  - The "standard" layout (layer set) includes both Qwerty and Colemak (with LFO mod) layers that
-   you can trivially swap between whilst transitioning.
+   you can trivially swap between whilst transitioning (using the _Layout-Home_ key).
 
  - The base layer has no 'usual' number row; numbers are accessed by an evolved numeric keypad
    layer providing much faster and easier number entry for all but single digits - this
    combination of layers is very hard to beat in the Speed Typing stakes (which is the goal
-   here after all).
+   here after all if we wish to minimize RSI).
 
- - Finally, since the usual top number row is gone, the home row, i.e. the entire layout, could
-   be moved up by one row - and with the ErgoDox, this means that for our underused thumbs,
-   instead of thumbs having easy access to pressing 2 keys and 2 additional thumb keys at a
-   stretch, we now have 4 immediate thumb keys, 2 additional just a little beyond, and 4 extra
-   thumb keys at a stretch.
+ - Finally, since the usual top number row is gone, the home row (i.e. the entire layout) could
+   be moved up by one row, which default ZenTron does.
+
+   On the ErgoDox, this means that for our underused thumbs, instead of thumbs having easy
+   access to 2 keys and 2 additional thumb keys at a stretch, we now have 4 immediate thumb
+   keys, 2 additional just a little beyond, and 4 extra thumb keys at a stretch.
 
 
 
 -------
 ## Features
 
- - Mostly inverted (top and bottom rows swapped) Maltron keyboard layout (Maltron is for
-   keyboards with at least two thumb keys).
+ - ZenTron is a mostly inverted (top and bottom rows swapped) Maltron keyboard layout.  Maltron
+   is for keyboards with at least two thumb keys.
 
- - As with standard Maltron, left thumb is __E__ and right thumb is __Space__.
+ - As with standard Maltron, the left thumb is __E__ and right thumb is __Space__.
 
- - Additional thumb keys are dedicated to minus (hyphen) and plus, underscore, an extra Enter
-   key and _Alt-CapsLock_ for use as a "switch language" key (if you're mathematically inclined,
-   you might like to add _Greek_ in your OS keyboard or language settings).
+ - Additional thumb keys are dedicated to minus (hyphen) and plus, underscore, extra Enter and
+   Space keys, and _Alt-CapsLock_ for use as a "switch language" key - if you're mathematically
+   inclined, it can be useful and fun to add _Greek_ in your OS keyboard language settings.
 
- - The little finger columns, are offset downwards by one row; this results in the shorter
-   little fingers, resting naturally on their correct keys, further reducing finger, wrist and
-   arm movements when typing.
+ - The little finger columns are offset downwards by one row - the __LFO Mod__.  This results in
+   the shorter little fingers, resting naturally on their correct keys, further reducing finger,
+   wrist and arm movements when typing.
 
- - Using 4 fingers for cursor motion (and also PgUp/PgDn and Home/End) in the traditional Vim or
-   gaming style (on Qwerty layouts, the H J K L, or A S D F key groups, respectively), is
+ - Using 4 fingers for cursor motion (and also PgUp, PgDn, Home and End) in the traditional Vim
+   or gaming style (on Qwerty layouts, the H J K L, or A S D F key groups, respectively), is
    _inherently_ faster than the more common 3-finger cursor motion cluster found on most
    'standard' keyboards today where both _Up_ and _Down_ are pressed using the same finger,
    since with only 3 fingers, the middle finger (usually) must extend or contract when you need
-   to swap from the Up key to the down key or vice versa;
+   to swap from the _Up_ key to the _Down_ key or vice versa.
 
-   - Due to the inherently faster "4 finger" cursor key cluster layout, the ZenTron-LFO layout
-	 strictly uses this design element for all cursor motion key clusters.
+   - This inherently faster "4 finger" cursor key cluster layout design element is used in all
+	 cases in the ZenTron-LFO layout.
 
- - The Qwerty-LFO layer (standard Qwerty, with the LFO "Little Finger Offset" mod) and
-   Colemak-LFO layers are single key presses away.
+ - The Qwerty-LFO (standard Qwerty with LFO mod) and Colemak-LFO layers are single key presses
+   away.
 
- - Ready access to a numeric keypad, function keys, and (e.g. Vim) "Nav"igation layer (thank you
-   QMK layers).
+ - Ready access to a numeric keypad, function keys, and (e.g. Vim) "Nav"igation layer - thank
+   you QMK layers.
 
- - Stable thumb clusters and meta keys (shift, ctrl, alt, enter, tab, esc, backspace) placement
-   across most/all layers.
+ - Stable thumb clusters and meta key (Shift, Ctrl, Alt, Enter, Tab, Esc, Backspace) placement
+   across most/all layers, and no gratuitous placement changes - all placements are to optimize
+   ergonomics, functionality, consistency between layers, or some combination of those three.
 
- - No gratuitous placement changes - all placements to optimize ergonomics, functionality,
-   consistency between layers, or some combination of those three.
+ - __Single handed numpad operation__ using symmetrical numpad access _dual-fun_ keys, and a
+   Numpad layer toggle key for comfortable extended number entry sessions.
 
- - __Single handed numpad operation__, as well as symmetrical numpad toggle keys for comfortable
-   extended number entry sessions.
-
-   - Numpad designed to be used at any time without ever involving the left hand!  (This is
-	 thanks to ErgoDox/QMK dual function LayerToggle feature.)
+   - Numpad is designed to be used at any time without ever involving the left hand!  This is
+	 thanks to ErgoDox/QMK dual-function LayerToggle feature.
    - Numpad can also (naturally) be toggled, for extended number entry sessions.
    - Numpad includes Tab, ESC, Enter, Backspace and brackets.
-   - The numpad's Tab, ESC, \*, /, Backspace, Enter, period, $ and =, are all in the
-	 same spot as on the base layer.
+   - The numpad's ESC, \*, /, Backspace, Enter, period, $ and =, are all in the same spot as on
+	 the base layer.
 
- - For command line and tab completion, Tab key opposes (is on the other hand to) the period
-   (full stop '.') and forward slash ('/') keys;
+ - For command line and tab completion, the _Tab_ key opposes (is on the other hand to) the
+   period (full stop '.') and forward slash ('/') keys.
 
  - The ZenTron, Qwerty-LFO and Colemak-LFO layers are swappable (i.e. they each contain the full
    set of keys required on a base layer), which allows for easy switching of the default layer
@@ -161,20 +164,21 @@ So until tomorrow, this is it :)
 
 (Note that some keys are as yet not assigned.)
 
-[ZenTron.00-US.en: ZenTron, Qwerty + Colemak LFO, Numpad, Fn,
-Nav](https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/2),
-the Qwerty-LFO layer in Oryx (Javascript required) of the stable full layout version with all
-layers including Qwerty-LFO and Colemak-LFO, Numpad, FnKeys and Navigation etc.  Click on the
-ZenTron tab in Oryx to see the ZenTron layer to compare it with the Qwerty-LFO layer.
+Here is [ZenTron.00-US.en: ZenTron, Qwerty + Colemak LFO, Numpad, Fn,
+Nav](https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/2), the Qwerty-LFO layer
+in Oryx (Javascript required) of the stable version with all layers including Qwerty-LFO and
+Colemak-LFO, Numpad, FnKeys and Navigation etc.  Click on the ZenTron tab in Oryx to see the
+ZenTron (base) layer to compare it with the Qwerty-LFO layer.
 
 Here is a [plain low resolution screenshot - Qwerty_LFO-872x326.png (69KiB)](Qwerty_LFO-872x326.png) -
 of just the Qwerty-LFO layer, and here is [a higher resolution screenshot of the full Oryx UI -
-Qwerty_LFO-1228x845.png (159KiB)](Qwerty_LFO-Oryx_full-1228x845.png).
-
-Your incredibly humble author's "scratch pad" layout, which has a small number of quirky
-changes, and also has the Qwerty-LFO and Colemak-LFO layers removed can be found [in Oryx
-here](https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest), and here's an [Oryx UI
+Qwerty_LFO-1228x845.png (159KiB)](Qwerty_LFO-Oryx_full-1228x845.png), and here's an [Oryx UI
 screenshot of layer zero "0" (160K)](ZenTron-Oryx_full-1228x845.png).
+
+
+Your incredibly humble author's "scratch pad" layout which has a small number of quirky
+changes and also has the Qwerty-LFO and Colemak-LFO layers removed, can be found [in Oryx
+here](https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest).
 
 Here are "keyboard only" screenshots of the primary layers (the 3 caps lock lighting layers not
 included):
@@ -199,8 +203,7 @@ for others.
 
 Note that the initial author of this document was only familiar with a US style keyboard, so
 users of other keyboards will likely need some different config mods - please send your
-suggestions for such variations to ```ergo@freedbms.net``` to have them included here for others
-to more easily find.
+suggestions for such variations to ```ergo@freedbms.net``` so others may more easily find them.
 
 
 ### Window manager
@@ -225,10 +228,10 @@ works the same as cycling through browser tabs:
 
 Example other "standard" tmux bindings (and see also https://github.com/tmux/tmux/issues/754 ):
 
-	set -g prefix F12
-	bind F12 select-window -t:!
-	unbind C-b
+	set -g prefix F12               # F12 was/is the std prefix in the old Gnu Screen
 	bind F12 send-prefix
+	bind F12 select-window -t:!     # This + the line(s) above makes an F12 "double tap" swap tmux windows
+	unbind C-b
 	set -g mode-keys vi
 
 	bind -n F10 new-window
@@ -267,64 +270,77 @@ layout, this gives ready single handed prev/next, for both left and right hand:
 
 ### URLs
 
- - This is the author's "scratch" layout which may have a few changes from the official ZenTron
-   layout, and which may change at any time: https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest/0
+ - This is the author's "scratch" layout which has a few changes from the official ZenTron
+   layout, and which may change at any time:
+   https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest/0
+
  - http://xahlee.info/kbd/char_frequency_counter.html
+
  - http://xahlee.info/comp/computer_language_char_distribution.html
 
- - http://xahlee.info/kbd/Maltron_keyboard.html
- - https://colemakmods.github.io/mod-dh/
  - http://xahlee.info/kbd/dvorak_vs_colemak_vs_workman.html
+
+ - http://xahlee.info/kbd/Maltron_keyboard.html
+
+ - https://colemakmods.github.io/mod-dh/
 
 
 ### Background
 
-Being able to type on qwerty at ~45 words per minute is reasonably quick for most work, but the
+Being able to type on qwerty at ~40 words per minute is reasonably quick for most work, but the
 Qwerty layout is not the best if you want to minimize or reduce RSI (repetitive strain injury).
 A benefit of improving the character layout to reduce RSI, i.e. using a so-called ergonomic
 layout, is to minimize arm, wrist and finger movements and therefore to maximise potential
 typing speed.
 
 There are many ergonomic keyboard character layouts which (at least attempt to) improve on
-Qwerty, or to improve on other ergonomic layouts since Qwerty.
+Qwerty, or to improve on other ergonomic layouts since Qwerty such as Dvorak, Colemak, Workman
+and Maltron.
 
 The author resolved to learn an ergonomic layout earlier this year (2020) when he was fortunate
-enough to be provided an ErgoDox-EZ Glow.  Having used a TrulyErgonomic for a few years, which
-continues to be an excellent ortholinear keyboard, and an MS Natural keyboard for many years
-before that, and a user of Gnu Bash, Tmux, Vim, Mutt and Java without an IDE, the opportunity to
-explore easy keyboard layout tinkering was seized.
+enough to be provided an ErgoDox-EZ Glow and had decided on _Colemak Mod-DHm_.
+
+Having used a TrulyErgonomic for a few years, which continues to be an excellent ortholinear
+keyboard, and an MS Natural keyboard for many years before that, and a user of Gnu Bash, Tmux,
+Vim, Mutt and Java without an IDE, the opportunity to explore easy keyboard layout tinkering was
+seized.
 
 Having thus resolved to learn a new layout, why learn more than one?  Why not just learn the
 best?
 
-It turns out that as of 2020 at least, the late 1970s Maltron layout has apparently stood the
-test of time - it is still statistically better than all newer layouts that have come since!
+It turns out that as of 2020 at least, the 1970s Maltron layout has apparently stood the test of
+time - it is still statistically better than all newer layouts that have come since!
 See here: http://xahlee.info/kbd/maltron_vs_dvorak_layout.html
 
-Trying Maltron on the ErgoDox for an hour felt suboptimal and clunky, just not right (despite
-obviously being a completely foreign layout), so I checked the character frequency charts (see
-Xah Lee's links above) and it seemed apparent that the Maltron was upside down.  So I inverted
-the layout and experienced instant noticeable improvement.
+Trying Maltron on the ErgoDox for an hour felt suboptimal and clunky, it just didn't seem right
+(despite obviously being a completely foreign/new layout), so I checked the character frequency
+charts (see Xah Lee's links above) and it seemed apparent that Maltron was upside down.  So I
+inverted the layout and experienced instant noticeable improvement.
 
 Right around the same time and due to thinking about minimizing finger movement, I also offset
 the little finger "pinky" column down one row (relative to the three other fingers).  This made
-a further very nice improvement - when resting the hands above the Ergodox, the little fingers
-were for _the first time ever_ finally above their correct keys, and not a row or more below.
+a further immediate and positive improvement again - when resting the hands above the Ergodox,
+the little fingers were for __the first time ever__ finally above their correct keys, and not a
+row or more below.
 
 When taking a guilty little peek at one's outstretched fingers, and comparing the difference in
 their lengths, it's obvious there is MORE than one whole key difference in length from the pinky
 to the ring finger - about a key and a half!  This LFO is such a huge improvement to reducing
 arm movement forwards and backwards, you can now literally type continuously with your wrists
 firmly planted on the wrist rests - just watch you now lift your wrists when needed to avoid
-_worse_ RSI due to excessive wrist twist due to a "stuck" wrist resting... which becomes
-tempting!
+_worse_ RSI due to excessive wrist twist due to a "stuck" wrist resting!
 
 The final 'big' change was a day or so later, after using a single-handed 'numeric keypad' layer
 and never the traditional top row of numbers, when the top row was ditched altogether and the
-rest of the rows were moved up a full row: type happily ever after :)
+rest of the rows were moved up a full row: type happily ever after with abundant thumb keys and
+the consequent _awesome_ layout flexibility :)
 
-Having 10 extra physical keys also gives a lot of layout flexibility, and the ability to reduce
-keys with overlapping functions (for example, cursor movement keys) if you so choose.
+Having 10 extra physical keys (from the removed number row) also gives even more layout
+flexibility, and the ability to reduce the number of keys with overlapping functions (for
+example, cursor movement keys) if you so choose - which after much testing I resolved to put on
+a separate layer anyway, to maximize symmetry and consistency of usage patterns - ultimately
+some of such choices will always come down to a personal preference, and wrote learnt muscle
+memory will kick in soon enough.
 
 Also note that besides its known firmware bugs, the Maltron is concave (like a bowl) and that is
 an obvious "physical ergonomic" improvement which the ErgoDox does not have - one must look to
