@@ -1,0 +1,26 @@
+#!/bin/bash
+
+analyzeName () {
+   local arg1=${1:?"ERROR - empty arg; rll/readlink_list requires a filename"}
+   for re in "$@"; do
+      echo "---- Analyzing \"$re\""
+      echo -n "type: "; type -a "$re"
+      if [ -a "$re" ]; then
+         namei -xl "$re"
+         re="$(readlink -f "$re")"
+      else
+         re="$(which "$re")"
+         namei -xl "$re"
+         re="${re:?"Cannot locate file or program \"$1\""}"
+         [ -h "$re" ] && ls -ld --color "$re"
+         re="$(readlink -f "$re")"
+      fi
+      [ -f "$re" -a -x "$re" ] && re="$(which "$re")"
+      ls -ld --color "$re"
+      /usr/bin/file "$re"
+      /usr/bin/file -bi "$re"
+   done
+   echo "{namei|readlink|/usr/bin/file} -f {file}..."
+}
+
+analyzeName "$@"
