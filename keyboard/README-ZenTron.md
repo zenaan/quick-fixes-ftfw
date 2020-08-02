@@ -83,7 +83,7 @@ So until tomorrow, this is it :)
  - Punctuation, Tab, Escape and meta keys, are all optimized for programmers and
    command line use - although this can be quite a personal thing so YMMV.
 
- - The numeric keypad is right-handed (some needed punctuation is on the LHS) but the FnKey and
+ - The numeric keypad, punctuation, FnKey and
    Navigation layers are symmetrical, which also provides for alternating which hand is used in
    order to minimize RSI.
 
@@ -144,18 +144,20 @@ So until tomorrow, this is it :)
    Numpad layer toggle key for comfortable extended number entry sessions.
 
    - Numpad is designed to be used at any time without ever involving the left hand!  This is
-	 thanks to ErgoDox/QMK dual-function LayerToggle feature.
+	 thanks to ErgoDox/QMK dual-function LayerToggle feature - just don't do this too much, or
+	 it could cause _worse_ RSI.
    - Numpad can also (naturally) be toggled, for extended number entry sessions.
    - Numpad includes Tab, ESC, Enter, Backspace and brackets.
-   - The numpad's ESC, \*, /, Backspace, Enter, period, $ and =, are all in the same spot as on
-	 the base layer.
+   - The RHS numpad's ESC, \*, /, Backspace, Enter, period, $ and =, are all in the same spot as
+	 on the base layer.
 
  - For command line and tab completion, the _Tab_ key opposes (is on the other hand to) the
    period (full stop '.') and forward slash ('/') keys.
 
  - The ZenTron, Qwerty-LFO and Colemak-LFO layers are swappable (i.e. they each contain the full
    set of keys required on a base layer), which allows for easy switching of the default layer
-   (on startup/ turning on the computer/ plugging in the keyboard).
+   (on startup/ turning on the computer/ plugging in the keyboard) - if for some reason you want
+   that :)
 
 
 
@@ -176,12 +178,13 @@ Qwerty_LFO-1228x845.png (159KiB)](Qwerty_LFO-Oryx_full-1228x845.png), and here's
 screenshot of layer zero "0" (160K)](ZenTron-Oryx_full-1228x845.png).
 
 
-Your incredibly humble author's "scratch pad" layout which has a small number of quirky
+Your incredibly humble author's "scratch pad" (and daily use) layout which has a small number of quirky
 changes and also has the Qwerty-LFO and Colemak-LFO layers removed, can be found [in Oryx
 here](https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest).
 
 Here are "keyboard only" screenshots of the primary layers (the 3 caps lock lighting layers not
-included):
+included) - just note that the NumPad layer screenshot is out of date, the latest stable version
+has moved to the LHS and RHS being symmetrical, with extra punctuation now on one layer above:
  - Layer 0 [ZenTron-1210x452.png](ZenTron-1210x452.png) (96K)
  - Layer 2 [Qwerty_LFO-1210x452.png](Qwerty_LFO-1210x452.png) (96K)
  - Layer 4 [Colemak_LFO-1210x452.png](Colemak_LFO-1210x452.png) (95K)
