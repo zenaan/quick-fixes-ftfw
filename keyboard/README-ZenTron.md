@@ -12,6 +12,10 @@ https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/0
 
 (On that Oryx page, click "Play layout tour" near the bottom left for the HTML/JS linked tour.)
 
+Here's a Reddit thread:
+
+https://www.reddit.com/r/ergodox/comments/i27st2/zentron_the_fastest_keyboard_layout_in_the_world/
+
 ZenTron is intended to be **_Cyrillic ready_** with a full __9__ yet to be assigned keys - if you
 speak Russian, please send your suggestions for a "Cyrillic LFO" ergonomic layer mapping to the
 ZenTron ergo layout, and the author shall whip up a custom XOrg Cyrillic keyboard layout for
