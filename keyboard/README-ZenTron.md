@@ -12,6 +12,19 @@ https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/0
 
 (On that Oryx page, click "Play layout tour" near the bottom left for the HTML/JS linked tour.)
 
+Here is a ~134KiB reduced and cropped [photo of the ErgoDox-EZ (Glow)](ErgoDox-EZ--ZenTron_physical-1920x669.jpg)
+where you can see the home row keys (and thumb "home" keys) are gold-painted keycaps; just note
+that not all keycaps match the actual ZenTron layout (R should be "N", Q should be "I", the
+arrow keys are T, H, O and R respectively, and the RHS thumb key labelled "W" in the photo, is
+actually (as per Maltron) a space bar key).  For reference, the EZ in this photo is flanked by
+two Logitech Trackman Marble trackballs, which are simply the most awesome mice in the world!
+
+If you wish to go cold turkey on ZenTron (as the author did), then you might set aside a few
+days, and you may prefer the author's daily use layout which ditches the Qwerty and Colemak
+layers, and has a few other customizations which you may find preferable, YMMV:
+
+https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest
+
 Here's a Reddit thread:
 
 https://www.reddit.com/r/ergodox/comments/i27st2/zentron_the_fastest_keyboard_layout_in_the_world/
