@@ -12,39 +12,11 @@ https://configure.ergodox-ez.com/ergodox-ez/layouts/nmR7W/latest/0
 
 (On that Oryx page, click "Play layout tour" near the bottom left for the HTML/JS linked tour.)
 
-Here is a ~134KiB reduced and cropped [photo of the ErgoDox-EZ (Glow)](ErgoDox-EZ--ZenTron_physical-1920x669.jpg)
-where you can see the home row keys (and thumb "home" keys) are gold-painted keycaps; just note
-that not all keycaps match the actual ZenTron layout (R should be "N", Q should be "I", the
-arrow keys are T, H, O and R respectively, and the RHS thumb key labelled "W" in the photo, is
-actually (as per Maltron) a space bar key).  For reference, the EZ in this photo is flanked by
-two Logitech Trackman Marble trackballs, which are simply the most awesome mice in the world!
-
-If you wish to go cold turkey on ZenTron (as the author did), then you might set aside a few
-days, and you may prefer the author's daily use layout which ditches the Qwerty and Colemak
-layers, and has a few other customizations which you may find preferable, YMMV:
-
-https://configure.ergodox-ez.com/ergodox-ez/layouts/QaRAV/latest
-
-Here's a Reddit thread:
-
-https://www.reddit.com/r/ergodox/comments/i27st2/zentron_the_fastest_keyboard_layout_in_the_world/
-
-ZenTron is intended to be **_Cyrillic ready_** with a full __9__ yet to be assigned keys - if you
-speak Russian, please send your suggestions for a "Cyrillic LFO" ergonomic layer mapping to the
-ZenTron ergo layout, and the author shall whip up a custom XOrg Cyrillic keyboard layout for
-download.
-
-So that those who come after us might find them more easily, please send your suggestions for
-links, improvements and additions to:
-
-	ergo@freedbms.net
-
 
 __TOC:__
 
  1. [Overview](#user-content-overview)
- 1. [Summary](#user-content-summary)
- 1. [Features](#user-content-features)
+ 1. [Summary/ Features](#user-content-summary)
  1. [Screenshots and links](#user-content-screenshots-and-links)
  1. [Application and Window Manager configuration suggestions](#user-content-app-and-window-manager-config-suggestions)
  1. [Addenda](#user-content-addenda)
@@ -54,10 +26,10 @@ __TOC:__
 ----
 ## Overview
 
-ZenTron is a mostly inverted _Maltron_ layout, with the little finger columns offset down one
-row, and keyboard layers (thank you [QMK keyboard firmware](https://docs.qmk.fm/#/)) for
-numbers, function keys and navigation, which is of course an example from which you may
-liberally pirate.
+ZenTron is a mostly inverted _Maltron_ layout (far right column is not inverted), with the
+little finger columns offset down one row (_LFO mod_), and keyboard layers (thank you [QMK
+keyboard firmware](https://docs.qmk.fm/#/)) for numbers, function keys and navigation, which is
+of course an example from which you may liberally pirate.
 
 This particular combination of keyboard layout and layers, is getting close to the fastest
 achievable keyboard layout for maximising typing speed on any planar (two dimensional, single
@@ -72,20 +44,61 @@ Keep in mind that _typing speed_ is largely synonymous with _ergonomic_ and with
 
 So until tomorrow, this is it :)
 
+__Update 2020-08-13:__ As of 2020-08-13, here is my [current ZTron and RSTHP layout
+set](https://configure.ergodox-ez.com/ergodox-ez/layouts/QayrK/latest/0) which modifies ZenTron
+for maximum overlap between _ZTron_ and a Colemak-ModDH style [_RSTH[DP] layout
+variant_](https://configure.ergodox-ez.com/ergodox-ez/layouts/QayrK/latest/2) - see the
+[homepage for RSTHD here](https://xsznix.wordpress.com/2016/05/16/introducing-the-rsthd-layout/).
+
+---
+Here is a ~134KiB reduced and cropped [photo of the ErgoDox-EZ (Glow)](ErgoDox-EZ--ZenTron_physical-1920x669.jpg)
+with keycaps mostly corresponding to the ZenTron layout,
+where you can see the home row keys (and thumb "home" keys) are gold-painted keycaps; just note
+that not all keycaps match the actual ZenTron layout (R should be "N", Q should be "I", the
+arrow keys are T, H, O and R respectively, and the RHS thumb key labelled "W" in the photo, is
+actually (as per Maltron) a space bar key).  For reference, the EZ in this photo is flanked by
+two Logitech Trackman Marble trackballs, which are simply the most awesome mice in the world.
+
+If you wish to go cold turkey on ZenTron (as the author did), then you might set aside a few
+days, and you may prefer the author's daily use layout which ditches the Qwerty and Colemak
+layers, and has a few other customizations which you may find preferable, YMMV (this link is to
+the new "daily dogfood" ZTron 2020-08-13 layout):
+
+https://configure.ergodox-ez.com/ergodox-ez/layouts/QayrK/latest/0
+
+Here's a Reddit thread:
+
+https://www.reddit.com/r/ergodox/comments/i27st2/zentron_the_fastest_keyboard_layout_in_the_world/
+
+ZenTron is intended to be **_Cyrillic ready_** with a full __9__ yet to be assigned keys - if you
+speak Russian, please send your suggestions for a "Cyrillic LFO" ergonomic layer mapping to the
+ZenTron ergo layout, to be added here for others to more easily find.
+
+So that those who come after us might find them more easily, please send your suggestions for
+links, improvements and additions to:
+
+	ergo@freedbms.net
+
 
 
 ----
 ## Summary
 
- - At heart ZenTron is an inverted [_Maltron_](http://xahlee.info/kbd/Maltron_keyboard.html)
-   layout - which feels better and faster to type on than plain Maltron.  The exception is that
-   the RHS (right hand side) little finger column is not inverted.
+ - At heart ZenTron is a mostly (top and bottom rows swapped) inverted
+   [_Maltron_](http://xahlee.info/kbd/Maltron_keyboard.html) keyboard character layout, designed
+   for use on the ErgoDox planar (flat, and not curved like a bowl) keyboard - which feels
+   better and faster to type on than plain Maltron.  The exception to the inversion is that the
+   RHS (right hand side) little finger column is not inverted.
+
+   Maltron is for keyboards with at least two thumb keys.
 
    Xah Lee [highlights conclusively that](http://xahlee.info/kbd/maltron_vs_dvorak_layout.html)
-   Maltron is inherently better than all other layouts today (it adds a home row key on the left
-   thumb).
+   Maltron is inherently better than all other layouts today as it adds a home row key on the left
+   thumb (_E_), thus spreading out the heat map more effectively.
 
-   On top of this we add a Little Finger Offset modification (__LFO mod__) where the pinky
+   As with standard Maltron, on ZenTron/ZTron the left thumb is __E__ and right thumb is __Space__.
+
+ - On top of this we add a Little Finger Offset modification (__LFO mod__) where the pinky
    finger columns are offset downwards by one row, which is faster again, as this actually
    aligns the pinky fingers with the actual keys they are supposed to press!
 
@@ -97,45 +110,44 @@ So until tomorrow, this is it :)
    fingers if you do that, simply lift your wrist when needed so as to not unnecessarily strain
    your delicate pinky.
 
- - Punctuation, Tab, Escape and meta keys, are all optimized for programmers and
-   command line use - although this can be quite a personal thing so YMMV.
+ - Update: The [RSTHD layout by Simon](https://xsznix.wordpress.com/2016/05/16/introducing-the-rsthd-layout/)
+   also uses Maltron's extra home row key "__E__ on the LHS thumb" innovation.
 
- - The numeric keypad, punctuation, FnKey and
-   Navigation layers are symmetrical, which also provides for alternating which hand is used in
-   order to minimize RSI.
+   As a result of discovering this on 2020-08-12, this author created [the ZTron
+   layout](https://configure.ergodox-ez.com/ergodox-ez/layouts/QayrK/latest/0) as a modification
+   to ZenTron to minimize the differences between ZTron and [his version of
+   RSTHP](https://configure.ergodox-ez.com/ergodox-ez/layouts/QayrK/latest/2) - as you can see
+   on that layer, only 4 keys are different to ZTron on the LHS, and 6 keys on the RHS.
 
- - The "standard" layout (layer set) includes both Qwerty and Colemak (with LFO mod) layers that
-   you can trivially swap between whilst transitioning (using the _Layout-Home_ key).
+   In addition, this "RSTHD" variant keeps the ZenTron "inline symmetrical caps lock keys"
+   innovation, "virtually symmetrical" comma + period, and more.
 
- - The base layer has no 'usual' number row; numbers are accessed by an evolved numeric keypad
+ - The base layer has no 'usual' number row keys; numbers are accessed by an evolved numeric keypad
    layer providing much faster and easier number entry for all but single digits - this
    combination of layers is very hard to beat in the Speed Typing stakes (which is the goal
    here after all if we wish to minimize RSI).
 
- - Finally, since the usual top number row is gone, the home row (i.e. the entire layout) could
-   be moved up by one row, which default ZenTron does.
+ - Punctuation, Tab, Escape and meta keys, are all optimized for programmers and command line
+   use - although this can be quite a personal thing so YMMV - the primary driver of this
+   feature/ benefit is the number keys being freed up for punctuation.
 
-   On the ErgoDox, this means that for our underused thumbs, instead of thumbs having easy
-   access to 2 keys and 2 additional thumb keys at a stretch, we now have 4 immediate thumb
+ - The NumPad (numeric keypad), punctuation ("Meta"), FnKey and Nav(igation) layers are each
+   symmetrical, which also provides for alternating which hand is used to further minimize RSI.
+
+ - The ZenTron layout (layer set) includes both Qwerty and Colemak (with LFO mod) layers that
+   you can trivially swap between whilst transitioning (using the _Layout-Home_ key).
+
+ - Finally, since the usual top number row is gone, the home row (i.e. the entire layout) could
+   be moved up by one row, which default ZenTron and ZTron both do.
+
+   __::__ On the ErgoDox, this means that for our underused thumbs, instead of thumbs having
+   easy access to 2 keys and 2 additional thumb keys at a stretch, we now have 4 immediate thumb
    keys, 2 additional just a little beyond, and 4 extra thumb keys at a stretch.
 
 
-
--------
-## Features
-
- - ZenTron is a mostly inverted (top and bottom rows swapped) Maltron keyboard layout.  Maltron
-   is for keyboards with at least two thumb keys.
-
- - As with standard Maltron, the left thumb is __E__ and right thumb is __Space__.
-
- - Additional thumb keys are dedicated to minus (hyphen) and plus, underscore, extra Enter and
-   Space keys, and _Alt-CapsLock_ for use as a "switch language" key - if you're mathematically
+ - Additional thumb keys are dedicated to minus (hyphen) and plus, underscore, and an extra
+   Space key, and _Alt-CapsLock_ for use as a "switch language" key - if you're mathematically
    inclined, it can be useful and fun to add _Greek_ in your OS keyboard language settings.
-
- - The little finger columns are offset downwards by one row - the __LFO Mod__.  This results in
-   the shorter little fingers, resting naturally on their correct keys, further reducing finger,
-   wrist and arm movements when typing.
 
  - Using 4 fingers for cursor motion (and also PgUp, PgDn, Home and End) in the traditional Vim
    or gaming style (on Qwerty layouts, the H J K L, or A S D F key groups, respectively), is
@@ -144,21 +156,18 @@ So until tomorrow, this is it :)
    since with only 3 fingers, the middle finger (usually) must extend or contract when you need
    to swap from the _Up_ key to the _Down_ key or vice versa.
 
-   - This inherently faster "4 finger" cursor key cluster layout design element is used in all
-	 cases in the ZenTron-LFO layout.
+   - The inherently faster "4 finger" cursor key cluster layout design element is used in all
+	 cases in the ZenTron and ZTron layouts.
 
  - The Qwerty-LFO (standard Qwerty with LFO mod) and Colemak-LFO layers are single key presses
-   away.
-
- - Ready access to a numeric keypad, function keys, and (e.g. Vim) "Nav"igation layer - thank
-   you QMK layers.
+   away in ZenTron.
 
  - Stable thumb clusters and meta key (Shift, Ctrl, Alt, Enter, Tab, Esc, Backspace) placement
    across most/all layers, and no gratuitous placement changes - all placements are to optimize
    ergonomics, functionality, consistency between layers, or some combination of those three.
 
- - __Single handed numpad operation__ using symmetrical numpad access _dual-fun_ keys, and a
-   Numpad layer toggle key for comfortable extended number entry sessions.
+ - __Single handed numpad operation__ using symmetrical numpad access _dual-fun_ keys; there's
+   also Numpad layer toggle key(s) for comfortable extended number entry sessions.
 
    - Numpad is designed to be used at any time without ever involving the left hand!  This is
 	 thanks to ErgoDox/QMK dual-function LayerToggle feature - just don't do this too much, or
